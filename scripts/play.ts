@@ -1,8 +1,7 @@
-import type { ResultPromise } from 'execa'
 import NodeFS from 'node:fs'
 import NodePath from 'node:path'
 import NodeProcess from 'node:process'
-import { execa } from 'execa'
+import { execa, type ResultPromise } from 'execa'
 
 let viteProcess: ResultPromise | null = null
 
@@ -34,7 +33,10 @@ function debounce(func: () => void, wait: number) {
     if (timeout) {
       clearTimeout(timeout)
     }
-    timeout = setTimeout(() => func(...args as unknown as Parameters<typeof func>), wait)
+    timeout = setTimeout(
+      () => func(...(args as unknown as Parameters<typeof func>)),
+      wait,
+    )
   }
 }
 
@@ -44,7 +46,7 @@ const watcher = NodeFS.watch(
   NodePath.join(NodeProcess.cwd(), 'src'),
   { recursive: true },
   (_, filename) => {
-    if (filename && filename.endsWith('.ts')) {
+    if (filename?.endsWith('.ts')) {
       console.log(`Change detected: ${filename}`)
       debouncedRestart()
     }
@@ -55,16 +57,14 @@ startVite()
 
 NodeProcess.on('SIGINT', () => {
   console.log('\nShutting down...')
-  if (viteProcess)
-    viteProcess.kill('SIGTERM')
+  if (viteProcess) viteProcess.kill('SIGTERM')
 
   watcher.close()
   NodeProcess.exit()
 })
 
 NodeProcess.on('SIGTERM', () => {
-  if (viteProcess)
-    viteProcess.kill('SIGTERM')
+  if (viteProcess) viteProcess.kill('SIGTERM')
 
   watcher.close()
   NodeProcess.exit()

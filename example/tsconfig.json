@@ -3,7 +3,11 @@
     "target": "ES2022",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -21,6 +25,11 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["**/*.ts"],
-  "files": ["reset.d.ts", "vite.config.ts"]
+  "include": [
+    "**/*.ts"
+  ],
+  "files": [
+    "reset.d.ts",
+    "vite.config.ts"
+  ]
 }

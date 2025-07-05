@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "lib": ["esnext", "DOM"],
+    "lib": [
+      "esnext",
+      "DOM"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
@@ -15,7 +18,15 @@
       "node"
     ]
   },
-  "include": ["src", "scripts"],
-  "files": ["reset.d.ts"],
-  "exclude": ["dist", "eslint.config.js"]
+  "include": [
+    "src",
+    "scripts"
+  ],
+  "files": [
+    "reset.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "eslint.config.js"
+  ]
 }

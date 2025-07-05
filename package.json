@@ -2,7 +2,6 @@
   "name": "unplugin-caddy",
   "type": "module",
   "version": "0.1.0",
-  "packageManager": "bun@1.2.18",
   "workspaces": {
     "packages": [
       "example",
@@ -10,31 +9,10 @@
     ]
   },
   "description": "Unplugin for Caddy",
-  "license": "MIT",
-  "homepage": "https://github.com/o-az/unplugin-caddy#readme",
   "repository": "github:o-az/unplugin-caddy",
-  "bugs": {
-    "url": "https://github.com/o-az/unplugin-caddy/issues"
-  },
-  "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown -w",
-    "lint": "bun x oxlint@latest",
-    "oxlint:fix": "bun x oxlint@latest --fix",
-    "lint:fix": "eslint . --fix",
-    "play": "bun --filter='playground' run dev",
-    "prepublishOnly": "bun run build",
-    "release": "bumpp && bun publish",
-    "start": "tsx src/index.ts",
-    "test": "vitest"
-  },
-  "keywords": [
-    "unplugin",
-    "vite",
-    "webpack",
-    "rollup",
-    "transform"
-  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
     "./astro": "./dist/astro.js",
@@ -48,9 +26,6 @@
     "./webpack": "./dist/webpack.js",
     "./package.json": "./package.json"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
       "*": [
@@ -62,6 +37,43 @@
   "files": [
     "dist"
   ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown -w",
+    "lint": "biome lint --write .",
+    "check": "biome check --write . --unsafe",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "play": "bun --filter='playground' run dev",
+    "prepublishOnly": "bun run build",
+    "release": "bumpp && bun publish",
+    "start": "tsx src/index.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "unplugin": "^2.3.4",
+    "execa": "^9.6.0",
+    "get-port": "^7.1.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^4.13.2",
+    "@biomejs/biome": "^2.0.6",
+    "@nuxt/kit": "^3.17.4",
+    "@nuxt/schema": "^3.17.4",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/bun": "^1.2.18",
+    "@types/node": "^24.0.10",
+    "bumpp": "^10.1.1",
+    "eslint": "^9.27.0",
+    "nodemon": "^3.1.10",
+    "rollup": "^4.41.0",
+    "tsdown": "^0.12.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4",
+    "webpack": "^5.99.9"
+  },
   "peerDependencies": {
     "@farmfe/core": ">=1",
     "@nuxt/kit": "^3",
@@ -71,6 +83,13 @@
     "vite": ">=3",
     "webpack": "^4 || ^5"
   },
+  "keywords": [
+    "unplugin",
+    "vite",
+    "webpack",
+    "rollup",
+    "transform"
+  ],
   "peerDependenciesMeta": {
     "@farmfe/core": {
       "optional": true
@@ -94,28 +113,6 @@
       "optional": true
     }
   },
-  "dependencies": {
-    "unplugin": "^2.3.4",
-    "execa": "^9.6.0",
-    "get-port": "^7.1.0",
-    "picocolors": "^1.1.1"
-  },
-  "devDependencies": {
-    "@antfu/eslint-config": "^4.13.2",
-    "@nuxt/kit": "^3.17.4",
-    "@nuxt/schema": "^3.17.4",
-    "@total-typescript/ts-reset": "^0.6.1",
-    "@types/bun": "^1.2.18",
-    "@types/node": "^24.0.10",
-    "bumpp": "^10.1.1",
-    "eslint": "^9.27.0",
-    "nodemon": "^3.1.10",
-    "rollup": "^4.41.0",
-    "tsdown": "^0.12.0",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5",
-    "vitest": "^3.1.4",
-    "webpack": "^5.99.9"
-  }
+  "packageManager": "bun@1.2.18",
+  "license": "MIT"
 }

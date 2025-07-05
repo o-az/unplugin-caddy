@@ -1,18 +1,17 @@
 const isSecure = window.location.protocol === 'https:'
 const statusElement = document.querySelector('div#status')
-if (!statusElement)
-  throw new Error('Status element not found')
+if (!statusElement) throw new Error('Status element not found')
 const appElement = document.querySelector('div#app')
-if (!appElement)
-  throw new Error('App element not found')
+if (!appElement) throw new Error('App element not found')
 
 if (isSecure) {
   statusElement.className = 'status secure'
-  statusElement.innerHTML = '🔒 Secure connection established! You are accessing this page via HTTPS with a locally-trusted certificate.'
-}
-else {
+  statusElement.innerHTML =
+    '🔒 Secure connection established! You are accessing this page via HTTPS with a locally-trusted certificate.'
+} else {
   statusElement.className = 'status insecure'
-  statusElement.innerHTML = '⚠️ Not secure - You are accessing this page via HTTP. Try accessing via the Caddy proxy URLs listed below.'
+  statusElement.innerHTML =
+    '⚠️ Not secure - You are accessing this page via HTTP. Try accessing via the Caddy proxy URLs listed below.'
 }
 
 appElement.innerHTML = /* html */ `

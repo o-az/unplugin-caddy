@@ -1,13 +1,12 @@
-import type { ResultPromise } from 'execa'
-import type { CaddyServer, Options } from './types.ts'
-import NodeFS from 'node:fs/promises'
-import NodeOS from 'node:os'
-import NodePath from 'node:path'
-import NodeProcess from 'node:process'
-import { execa } from 'execa'
-import getPort from 'get-port'
-
 import pc from 'picocolors'
+import NodeOS from 'node:os'
+import getPort from 'get-port'
+import NodePath from 'node:path'
+import NodeFS from 'node:fs/promises'
+import NodeProcess from 'node:process'
+import { execa, type ResultPromise } from 'execa'
+
+import type { CaddyServer, Options } from './types.ts'
 import { getInstallCommand, sleep } from './utilities/index.ts'
 
 function checkCaddyInstalled(caddyPath: string): Promise<boolean> {
@@ -36,7 +35,10 @@ export class CaddyServerManager implements CaddyServer {
       env: {},
       ...options,
     }
-    this.#caddyfilePath = NodePath.join(NodeOS.tmpdir(), `caddyfile-${Date.now()}`)
+    this.#caddyfilePath = NodePath.join(
+      NodeOS.tmpdir(),
+      `caddyfile-${Date.now()}`,
+    )
   }
 
   async start(): Promise<void> {
@@ -50,45 +52,50 @@ export class CaddyServerManager implements CaddyServer {
       console.error(pc.red('❌ Caddy is not installed or not found in PATH'))
       console.error(pc.yellow('\nTo install Caddy:'))
       console.error(pc.gray(`  • ${getInstallCommand()}`))
-      console.error(pc.gray('  • Or download from: https://caddyserver.com/download\n'))
+      console.error(
+        pc.gray('  • Or download from: https://caddyserver.com/download\n'),
+      )
       throw new Error('Caddy is not installed')
     }
 
-    this.#port = this.#options.port || await getPort({ port: 4443 })
+    this.#port = this.#options.port || (await getPort({ port: 4443 }))
 
     await this.generateCaddyfile()
 
     try {
-      this.#process = execa(this.#options.caddyPath, ['run', '--config', this.#caddyfilePath], {
-        env: {
-          ...NodeProcess.env,
-          ...this.#options.env,
+      this.#process = execa(
+        this.#options.caddyPath,
+        ['run', '--config', this.#caddyfilePath],
+        {
+          env: {
+            ...NodeProcess.env,
+            ...this.#options.env,
+          },
+          stdio: this.#options.verbose ? 'inherit' : 'pipe',
         },
-        stdio: this.#options.verbose ? 'inherit' : 'pipe',
-      })
+      )
 
       await sleep(1_000)
 
       console.log(pc.green(`✓ Caddy server started at ${this.getUrl()}`))
       if (this.#options.domains.length > 0) {
-        console.log(pc.green(`  Additional domains: ${this.#options.domains.join(', ')}`))
+        console.log(
+          pc.green(`  Additional domains: ${this.#options.domains.join(', ')}`),
+        )
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error(pc.red('Failed to start Caddy server:'), error)
       throw error
     }
   }
 
   async stop(): Promise<void> {
-    if (!this.#process)
-      return
+    if (!this.#process) return
 
     try {
       this.#process.kill('SIGTERM')
       await this.#process
-    }
-    catch (error) {
+    } catch (error) {
       console.error(pc.red('Failed to stop Caddy server:'), error)
 
       // Ignore errors from killing the process
@@ -98,8 +105,7 @@ export class CaddyServerManager implements CaddyServer {
 
     try {
       await NodeFS.unlink(this.#caddyfilePath)
-    }
-    catch {
+    } catch {
       //
     }
 
@@ -131,17 +137,16 @@ export class CaddyServerManager implements CaddyServer {
 
     // Build global options
     const globalOptions: Array<string> = []
-    if (!this.#options.https)
-      globalOptions.push('\tauto_https off')
+    if (!this.#options.https) globalOptions.push('\tauto_https off')
 
-    if (this.#options.https)
-      globalOptions.push('\tlocal_certs')
+    if (this.#options.https) globalOptions.push('\tlocal_certs')
 
-    const globalBlock = globalOptions.length > 0
-      ? `{\n${globalOptions.join('\n')}\n}\n\n`
-      : ''
+    const globalBlock =
+      globalOptions.length > 0 ? `{\n${globalOptions.join('\n')}\n}\n\n` : ''
 
-    const caddyfileContent = this.#options.caddyfile || `${globalBlock}${protocol}${hosts}:${this.#port} {
+    const caddyfileContent =
+      this.#options.caddyfile ||
+      `${globalBlock}${protocol}${hosts}:${this.#port} {
 \treverse_proxy localhost:${this.#targetPort}
 
 \t# Enable compression

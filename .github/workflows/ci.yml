@@ -4,13 +4,20 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
 
+defaults:
+  run:
+    shell: bash
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+
 jobs:
-  lint:
+  check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - name: 🔑 Checkout
@@ -21,23 +28,21 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Setup
-        run: bun install --global @antfu/ni
+      - name: 🐰 Install Dependencies
+        run: bun install
 
-      - name: Install
-        run: nci
-
-      - name: Lint
-        run: nr lint
+      - name: 'Lint, Check, Typecheck'
+        run: |
+          bun x @biomejs/biome check . --reporter='github'
+          bun run typecheck
 
   test:
+    name: Test
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
       fail-fast: false
-
     steps:
       - name: 🔑 Checkout
         uses: actions/checkout@v4
@@ -47,14 +52,8 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Setup
-        run: bun install --global @antfu/ni
-
-      - name: Install
-        run: nci
-
       - name: Build
-        run: nr build
+        run: bun run build
 
       - name: Test
-        run: nr test
+        run: bun run test

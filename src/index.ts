@@ -1,14 +1,15 @@
-import type { UnpluginFactory } from 'unplugin'
-import type { CaddyServer, Options } from './types.ts'
-
 import NodeProcess from 'node:process'
-import { createUnplugin } from 'unplugin'
-import { CaddyServerManager } from './caddy-server.ts'
+import { createUnplugin, type UnpluginFactory } from 'unplugin'
+
 import { printBanner } from './utilities/index.ts'
+import type { CaddyServer, Options } from './types.ts'
+import { CaddyServerManager } from './caddy-server.ts'
 
 let caddyServer: CaddyServer | null = null
 
-export const unpluginFactory: UnpluginFactory<Options | undefined> = (options = {}) => {
+export const unpluginFactory: UnpluginFactory<Options | undefined> = (
+  options = {},
+) => {
   return {
     name: 'unplugin-caddy',
 
@@ -22,13 +23,11 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options = 
         // Start Caddy when Vite server is ready
         server.httpServer?.once('listening', async () => {
           try {
-            if (!caddyServer)
-              return
+            if (!caddyServer) return
             await caddyServer.start()
 
             printBanner(caddyServer.getUrl(), `http://localhost:${targetPort}`)
-          }
-          catch (error) {
+          } catch (error) {
             console.error('Failed to start Caddy:', error)
           }
         })
@@ -50,8 +49,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options = 
       // For webpack-dev-server integration
       compiler.hooks.afterEnvironment.tap('unplugin-caddy', () => {
         const devServer = compiler.options.devServer
-        if (!devServer)
-          return
+        if (!devServer) return
 
         const targetPort = devServer.port || 80_80
         caddyServer = new CaddyServerManager(options, targetPort)
@@ -59,13 +57,15 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options = 
         // Hook into webpack-dev-server lifecycle
         const originalOnListening = devServer.onListening
         devServer.onListening = function (server: any) {
-          if (originalOnListening)
-            originalOnListening.call(this, server)
+          if (originalOnListening) originalOnListening.call(this, server)
 
           // Start Caddy after webpack-dev-server is ready
-          caddyServer!.start().then(() => {
-            console.log(`Caddy proxy available at: ${caddyServer!.getUrl()}`)
-          }).catch(console.error)
+          caddyServer!
+            .start()
+            .then(() => {
+              console.log(`Caddy proxy available at: ${caddyServer!.getUrl()}`)
+            })
+            .catch(console.error)
         }
       })
 

@@ -1,12 +1,14 @@
-import { platform } from 'node:os'
 import pc from 'picocolors'
+import { platform } from 'node:os'
 
 export async function sleep(ms: number): Promise<void> {
-  if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') {
+  if (
+    typeof SharedArrayBuffer !== 'undefined' &&
+    typeof Atomics !== 'undefined'
+  ) {
     const nil = new Int32Array(new SharedArrayBuffer(4))
     Atomics.wait(nil, 0, 0, Number(ms))
-  }
-  else {
+  } else {
     await new Promise(resolve => setTimeout(resolve, ms))
   }
 }
@@ -22,8 +24,7 @@ export async function noThrow<T>(
 ): Promise<Awaited<T>> {
   try {
     return await fn()
-  }
-  catch (error) {
+  } catch (error) {
     onError?.(error)
     return undefined as unknown as Awaited<T>
   }
@@ -32,10 +33,8 @@ export async function noThrow<T>(
 export function getInstallCommand(): string {
   const os = platform()
   return (() => {
-    if (os === 'darwin')
-      return 'brew install caddy'
-    if (os === 'win32')
-      return 'scoop install caddy'
+    if (os === 'darwin') return 'brew install caddy'
+    if (os === 'win32') return 'scoop install caddy'
     return 'sudo apt install caddy'
   })()
 }
@@ -58,6 +57,10 @@ export function formatCaddyError(error: unknown): string {
 export function printBanner(caddyUrl: string, viteUrl: string): void {
   console.info(`\n${pc.cyan('  Unplugin Caddy is running!\n')}`)
   console.info(pc.dim('  Vite dev server:  ') + pc.dim(viteUrl))
-  console.info(pc.green('  Caddy proxy:      ') + pc.green(caddyUrl) + pc.green(' (HTTPS)'))
+  console.info(
+    pc.green('  Caddy proxy:      ') +
+      pc.green(caddyUrl) +
+      pc.green(' (HTTPS)'),
+  )
   console.info()
 }
