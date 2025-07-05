@@ -148,8 +148,8 @@ export class CaddyServerManager implements CaddyServer {
     if (this.options.https) {
       globalOptions.push('\tlocal_certs')
     }
-    
-    const globalBlock = globalOptions.length > 0 
+
+    const globalBlock = globalOptions.length > 0
       ? `{\n${globalOptions.join('\n')}\n}\n\n`
       : ''
 

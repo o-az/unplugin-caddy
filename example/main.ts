@@ -1,8 +1,10 @@
 const isSecure = window.location.protocol === 'https:'
 const statusElement = document.querySelector('div#status')
-if (!statusElement) throw new Error('Status element not found')
+if (!statusElement)
+  throw new Error('Status element not found')
 const appElement = document.querySelector('div#app')
-if (!appElement) throw new Error('App element not found')
+if (!appElement)
+  throw new Error('App element not found')
 
 if (isSecure) {
   statusElement.className = 'status secure'

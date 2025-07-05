@@ -1,6 +1,7 @@
 import type { ResultPromise } from 'execa'
-import { watch } from 'node:fs'
-import { join } from 'node:path'
+import NodeFS from 'node:fs'
+import NodePath from 'node:path'
+import NodeProcess from 'node:process'
 import { execa } from 'execa'
 
 let viteProcess: ResultPromise | null = null
@@ -17,7 +18,7 @@ async function startVite() {
   viteProcess = execa('bun', ['x', 'vite'], {
     stdio: 'inherit',
     shell: true,
-    cwd: join(process.cwd(), 'example'),
+    cwd: NodePath.join(NodeProcess.cwd(), 'example'),
   })
 
   viteProcess.catch((error: unknown) => {
@@ -39,8 +40,8 @@ function debounce(func: () => void, wait: number) {
 
 const debouncedRestart = debounce(startVite, 300)
 
-const watcher = watch(
-  join(process.cwd(), 'src'),
+const watcher = NodeFS.watch(
+  NodePath.join(NodeProcess.cwd(), 'src'),
   { recursive: true },
   (_, filename) => {
     if (filename && filename.endsWith('.ts')) {
@@ -52,19 +53,19 @@ const watcher = watch(
 
 startVite()
 
-process.on('SIGINT', () => {
+NodeProcess.on('SIGINT', () => {
   console.log('\nShutting down...')
   if (viteProcess)
     viteProcess.kill('SIGTERM')
 
   watcher.close()
-  process.exit()
+  NodeProcess.exit()
 })
 
-process.on('SIGTERM', () => {
+NodeProcess.on('SIGTERM', () => {
   if (viteProcess)
     viteProcess.kill('SIGTERM')
 
   watcher.close()
-  process.exit()
+  NodeProcess.exit()
 })
