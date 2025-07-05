@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: '🔑 Checkout'
+        uses: actions/checkout@v4
+
+      - name: '🐰 Setup Bun'
+        uses: oven-sh/setup-bun@main
+        with:
+          bun-version: latest
+
+      - name: 'Install Dependencies'
+        run: bun install
+
+      - name: 'Lint, Typecheck, Build'
+        run: |
+          bun x @biomejs/biome check . --reporter='github'
+          bun run build
+          bun run typecheck

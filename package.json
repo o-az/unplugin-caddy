@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "unplugin-caddy",
+  "version": "0.0.0-alpha.1",
+  "type": "module",
+  "description": "Caddy plugin for Vite, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
+  "repository": "github:o-az/unplugin-caddy",
+  "imports": {
+    "#*": "./src/*",
+    "#package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./astro": "./dist/astro.js",
+    "./esbuild": "./dist/esbuild.js",
+    "./farm": "./dist/farm.js",
+    "./rollup": "./dist/rollup.js",
+    "./rolldown": "./dist/rolldown.js",
+    "./rspack": "./dist/rspack.js",
+    "./vite": "./dist/vite.js",
+    "./webpack": "./dist/webpack.js",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./*"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --config='tsdown.config.ts' --watch",
+    "lint": "biome lint --write .",
+    "check": "biome check --write . --unsafe",
+    "pretypecheck": "bun --filter=unplugin-caddy-example --filter=playground typecheck",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "play": "bun --filter='playground' run dev",
+    "prepublishOnly": "bun run build",
+    "release": "bumpp && bun publish",
+    "start": "tsx src/index.ts",
+    "test": "vitest",
+    "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'"
+  },
+  "workspaces": {
+    "packages": [
+      "example",
+      "playground"
+    ],
+    "catalog": {
+      "vite": "^6.3.5",
+      "typescript": "^5.8.3"
+    }
+  },
+  "dependencies": {
+    "unplugin": "^2.3.4",
+    "execa": "^9.6.0",
+    "get-port": "^7.1.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "^0.18.2",
+    "@biomejs/biome": "^2.0.6",
+    "@rspack/core": "^1.4.4",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/bun": "^1.2.18",
+    "@types/node": "^24.0.10",
+    "bumpp": "^10.1.1",
+    "publint": "^0.3.12",
+    "rollup": "^4.41.0",
+    "tsdown": "^0.12.9",
+    "tsx": "^4.20.3",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "unplugin-unused": "^0.5.1",
+    "vitest": "^3.1.4",
+    "webpack": "^5.99.9"
+  },
+  "peerDependencies": {
+    "@farmfe/core": ">=1",
+    "esbuild": "*",
+    "rollup": "^3",
+    "vite": ">=3",
+    "webpack": "^4 || ^5"
+  },
+  "peerDependenciesMeta": {
+    "@farmfe/core": {
+      "optional": true
+    },
+    "esbuild": {
+      "optional": true
+    },
+    "rollup": {
+      "optional": true
+    },
+    "rolldown": {
+      "optional": true
+    },
+    "rspack": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    }
+  },
+  "license": "MIT",
+  "packageManager": "bun@1.2.18",
+  "homepage": "https://github.com/o-az/unplugin-caddy",
+  "author": "https://github.com/o-az",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "caddy",
+    "https",
+    "localhost",
+    "unplugin",
+    "vite",
+    "rollup",
+    "rolldown",
+    "webpack",
+    "tunnel"
+  ]
+}

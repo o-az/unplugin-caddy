@@ -1,0 +1,14 @@
+{
+  "name": "playground",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "vite": "catalog:",
+    "typescript": "catalog:",
+    "vite-plugin-inspect": "^11.1.0"
+  }
+}

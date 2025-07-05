@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": [
+      "esnext",
+      "DOM"
+    ],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "alwaysStrict": true,
+    "resolvePackageJsonImports": true,
+    "strict": true,
+    "allowImportingTsExtensions": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": [
+      "bun",
+      "node"
+    ]
+  },
+  "include": [
+    "src",
+    "scripts"
+  ],
+  "files": [
+    "reset.d.ts",
+    "biome.json",
+    "package.json",
+    "tsconfig.json",
+    "tsdown.config.ts"
+  ],
+  "exclude": [
+    "dist",
+    "example",
+    "**/_/**",
+    "node_modules",
+    "**/node_modules/**"
+  ]
+}

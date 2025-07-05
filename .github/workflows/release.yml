@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+
+jobs:
+  publish-npm:
+    name: 'Publish to npm'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: '🔑 Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: '🐰 Setup Bun'
+        uses: oven-sh/setup-bun@main
+        with:
+          bun-version: latest
+          registry-url: https://registry.npmjs.org
+
+      - name: 'Install Dependencies'
+        run: bun install
+
+      - name: 'Build'
+        run: bun run build
+
+      - name: 'Publish'
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bun ./scripts/publish.ts --npm-token ${{ secrets.NPM_TOKEN }}
+
+  publish-gpr:
+    name: 'Publish to GitHub Package Registry'
+    needs: publish-npm
+    timeout-minutes: 4
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: '🔑 Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: '🐰 Setup Bun'
+        uses: oven-sh/setup-bun@main
+        with:
+          bun-version: latest
+          scope: '@o-az'
+          registry-url: https://npm.pkg.github.com
+
+      - name: 'Install Dependencies'
+        run: bun install
+
+      - name: 'Build'
+        run: bun run build
+
+      - name: 'Publish'
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bun ./scripts/publish.ts --npm-token ${{ secrets.GITHUB_TOKEN }}
