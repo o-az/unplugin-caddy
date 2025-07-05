@@ -20,11 +20,15 @@ type CaddyServerManagerOptions = {
 }
 
 export class CaddyServerManager {
-  constructor(private readonly options: CaddyServerManagerOptions) {}
+  #options: CaddyServerManagerOptions
+
+  constructor(options: CaddyServerManagerOptions) {
+    this.#options = options
+  }
 
   getUrl = (): string => {
-    const protocol = this.options.options.https ? 'https' : 'http'
-    return `${protocol}://${this.options.options.host}:${this.options.options.port}`
+    const protocol = this.#options.options.https ? 'https' : 'http'
+    return `${protocol}://${this.#options.options.host}:${this.#options.options.port}`
   }
 
   async start() {
@@ -34,25 +38,25 @@ export class CaddyServerManager {
       return
     }
 
-    const { port } = this.options.server.config.server
-    const domains = Array.isArray(this.options.options.domains)
-      ? this.options.options.domains
-      : [this.options.options.domains]
+    const { port } = this.#options.server.config.server
+    const domains = Array.isArray(this.#options.options.domains)
+      ? this.#options.options.domains
+      : [this.#options.options.domains]
 
     const config = generateCaddyConfig(
       domains,
-      this.options.options.port,
-      port || this.options.targetPort,
+      this.#options.options.port,
+      port || this.#options.targetPort,
     )
 
     const caddyConfig = writeTempFile(JSON.stringify(config, undefined, 2))
 
-    const caddyCommand = `${this.options.caddyPath} run --config ${caddyConfig.fullPath}`
+    const caddyCommand = `${this.#options.caddyPath} run --config ${caddyConfig.fullPath}`
     const caddyProcess = NodeChildProcess.spawn(caddyCommand, {
       shell: true,
     })
 
-    this.options.caddyProcess = caddyProcess
+    this.#options.caddyProcess = caddyProcess
 
     caddyProcess.stdout?.on('data', data => {
       console.info('^^', pc.green(data.toString()))
@@ -63,7 +67,6 @@ export class CaddyServerManager {
       if (!message) return
 
       try {
-        // Caddy outputs JSON logs
         const log = JSON.parse(message) as {
           level: string
           msg?: string
@@ -71,10 +74,7 @@ export class CaddyServerManager {
           [key: string]: unknown
         }
 
-        if (!this.options.options.verbose && log.level === 'info') {
-          // Skip info logs in non-verbose mode
-          return
-        }
+        if (!this.#options.options.verbose && log.level === 'info') return
 
         const prefix =
           log.level === 'error'
@@ -94,8 +94,7 @@ export class CaddyServerManager {
 
         console.log(`${prefix} ${color(log.msg || message)}`)
       } catch {
-        // If not JSON, just print as-is in verbose mode
-        if (this.options.options.verbose) console.log(`📝 ${pc.gray(message)}`)
+        if (this.#options.options.verbose) console.log(`📝 ${pc.gray(message)}`)
       }
     })
 
@@ -106,12 +105,12 @@ export class CaddyServerManager {
 
     console.info(pc.green(`🤠 Caddy has got your back. It's on cranking¬…`))
 
-    this.options.server.httpServer?.on('close', () => {
+    this.#options.server.httpServer?.on('close', () => {
       console.info(pc.yellow('Caddy is shutting down…'))
-      if (!this.options.caddyProcess.pid) return
+      if (!this.#options.caddyProcess.pid) return
       try {
-        NodeChildProcess.execSync(`kill -9 ${this.options.caddyProcess.pid}`)
-        NodeProcess.kill(this.options.caddyProcess.pid)
+        NodeChildProcess.execSync(`kill -9 ${this.#options.caddyProcess.pid}`)
+        NodeProcess.kill(this.#options.caddyProcess.pid)
       } catch (error) {
         const errorMessage =
           error instanceof Error
@@ -119,7 +118,7 @@ export class CaddyServerManager {
             : 'Caddy process is not running or not found'
         console.error(
           pc.red(
-            `Failed to kill Caddy process ${this.options.caddyProcess.pid}: ${errorMessage}`,
+            `Failed to kill Caddy process ${this.#options.caddyProcess.pid}: ${errorMessage}`,
           ),
         )
       }
@@ -129,10 +128,10 @@ export class CaddyServerManager {
   }
 
   async stop() {
-    if (!this.options.caddyProcess?.pid) return
+    if (!this.#options.caddyProcess?.pid) return
     try {
-      NodeChildProcess.execSync(`kill -9 ${this.options.caddyProcess.pid}`)
-      NodeProcess.kill(this.options.caddyProcess.pid, 'SIGKILL')
+      NodeChildProcess.execSync(`kill -9 ${this.#options.caddyProcess.pid}`)
+      NodeProcess.kill(this.#options.caddyProcess.pid, 'SIGKILL')
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -140,7 +139,7 @@ export class CaddyServerManager {
           : 'Caddy process is not running or not found'
       console.error(
         pc.red(
-          `Failed to kill Caddy process ${this.options.caddyProcess.pid}: ${errorMessage}`,
+          `Failed to kill Caddy process ${this.#options.caddyProcess.pid}: ${errorMessage}`,
         ),
       )
     }
