@@ -17,11 +17,11 @@ async function startVite() {
   viteProcess = execa('bun', ['x', 'vite'], {
     stdio: 'inherit',
     shell: true,
-    cwd: join(process.cwd(), 'playground'),
+    cwd: join(process.cwd(), 'example'),
   })
 
-  viteProcess.catch((error) => {
-    if (error.signal !== 'SIGTERM') {
+  viteProcess.catch((error: unknown) => {
+    if (error instanceof Error && error.name !== 'SIGTERM') {
       console.error('Vite process error:', error)
     }
   })

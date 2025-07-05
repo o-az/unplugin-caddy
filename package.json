@@ -5,6 +5,7 @@
   "packageManager": "bun@1.2.18",
   "workspaces": {
     "packages": [
+      "example",
       "playground"
     ]
   },
@@ -103,6 +104,7 @@
     "@antfu/eslint-config": "^4.13.2",
     "@nuxt/kit": "^3.17.4",
     "@nuxt/schema": "^3.17.4",
+    "@total-typescript/ts-reset": "^0.6.1",
     "@types/bun": "^1.2.18",
     "@types/node": "^24.0.10",
     "bumpp": "^10.1.1",

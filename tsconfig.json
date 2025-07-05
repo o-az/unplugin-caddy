@@ -14,5 +14,6 @@
     ]
   },
   "include": ["src", "scripts"],
+  "files": ["reset.d.ts"],
   "exclude": ["dist", "eslint.config.js"]
 }
