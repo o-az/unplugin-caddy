@@ -13,14 +13,16 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set node
-        uses: actions/setup-node@v4
+      - name: "🔑 Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🐰 Setup Bun"
+        uses: oven-sh/setup-bun@main
         with:
-          node-version: lts/*
+          bun-version: "latest"
 
       - name: Setup
-        run: npm i -g @antfu/ni
+        run: bun install --global @antfu/ni
 
       - name: Install
         run: nci
@@ -33,19 +35,20 @@ jobs:
 
     strategy:
       matrix:
-        node: [lts/*]
         os: [ubuntu-latest, windows-latest, macos-latest]
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set node ${{ matrix.node }}
-        uses: actions/setup-node@v4
+      - name: "🔑 Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🐰 Setup Bun"
+        uses: oven-sh/setup-bun@main
         with:
-          node-version: ${{ matrix.node }}
+          bun-version: "latest"
 
       - name: Setup
-        run: npm i -g @antfu/ni
+        run: bun install --global @antfu/ni
 
       - name: Install
         run: nci
