@@ -1,3 +1,11 @@
+export interface CaddyServer {
+  start: () => Promise<void>
+  stop: () => Promise<void>
+  restart: () => Promise<void>
+  getUrl: () => string
+  getProxyUrl: () => string
+}
+
 export interface Options {
   /**
    * Enable HTTPS with automatic certificate generation
@@ -33,7 +41,7 @@ export interface Options {
    * Additional domains for HTTPS certificates
    * @default []
    */
-  domains?: string[]
+  domains?: Array<string>
 
   /**
    * Enable verbose logging
@@ -45,12 +53,4 @@ export interface Options {
    * Custom environment variables for Caddy process
    */
   env?: Record<string, string>
-}
-
-export interface CaddyServer {
-  start: () => Promise<void>
-  stop: () => Promise<void>
-  restart: () => Promise<void>
-  getUrl: () => string
-  getProxyUrl: () => string
 }

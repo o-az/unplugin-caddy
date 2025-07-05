@@ -1,13 +1,14 @@
 import { platform } from 'node:os'
 import pc from 'picocolors'
 
-export function getGitCommitHash(): string {
-  const { stdout } = Bun.spawnSync({
-    cmd: ['git', 'rev-parse', 'HEAD'],
-    stdout: 'pipe',
-  })
-
-  return stdout.toString()
+export async function sleep(ms: number): Promise<void> {
+  if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') {
+    const nil = new Int32Array(new SharedArrayBuffer(4))
+    Atomics.wait(nil, 0, 0, Number(ms))
+  }
+  else {
+    await new Promise(resolve => setTimeout(resolve, ms))
+  }
 }
 
 export type MaybePromise<T> = T | Promise<T>

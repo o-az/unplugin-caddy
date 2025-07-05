@@ -4,8 +4,10 @@
     "lib": ["esnext", "DOM"],
     "module": "esnext",
     "moduleResolution": "node",
+    "noEmit": true,
     "resolveJsonModule": true,
     "strict": true,
+    "allowImportingTsExtensions": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
     "types": [

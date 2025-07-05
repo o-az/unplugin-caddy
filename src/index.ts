@@ -1,9 +1,10 @@
 import type { UnpluginFactory } from 'unplugin'
-import type { CaddyServer, Options } from './types'
+import type { CaddyServer, Options } from './types.ts'
+
 import NodeProcess from 'node:process'
 import { createUnplugin } from 'unplugin'
-import { CaddyServerManager } from './caddy-server'
-import { printBanner } from './utilities'
+import { CaddyServerManager } from './caddy-server.ts'
+import { printBanner } from './utilities/index.ts'
 
 let caddyServer: CaddyServer | null = null
 
@@ -13,7 +14,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options = 
 
     vite: {
       configureServer(server) {
-        const targetPort = server.config.server.port || 5173
+        const targetPort = server.config.server.port || 51_73
 
         // Create Caddy server instance
         caddyServer = new CaddyServerManager(options, targetPort)
@@ -21,19 +22,17 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options = 
         // Start Caddy when Vite server is ready
         server.httpServer?.once('listening', async () => {
           try {
-            await caddyServer!.start()
+            if (!caddyServer)
+              return
+            await caddyServer.start()
 
-            // Show banner with both URLs
-            const viteUrl = `http://localhost:${targetPort}`
-            const caddyUrl = caddyServer!.getUrl()
-            printBanner(caddyUrl, viteUrl)
+            printBanner(caddyServer.getUrl(), `http://localhost:${targetPort}`)
           }
           catch (error) {
             console.error('Failed to start Caddy:', error)
           }
         })
 
-        // Stop Caddy when Vite server closes
         const cleanup = async (): Promise<void> => {
           if (caddyServer) {
             await caddyServer.stop()
@@ -54,15 +53,14 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options = 
         if (!devServer)
           return
 
-        const targetPort = devServer.port || 8080
+        const targetPort = devServer.port || 80_80
         caddyServer = new CaddyServerManager(options, targetPort)
 
         // Hook into webpack-dev-server lifecycle
         const originalOnListening = devServer.onListening
         devServer.onListening = function (server: any) {
-          if (originalOnListening) {
+          if (originalOnListening)
             originalOnListening.call(this, server)
-          }
 
           // Start Caddy after webpack-dev-server is ready
           caddyServer!.start().then(() => {
