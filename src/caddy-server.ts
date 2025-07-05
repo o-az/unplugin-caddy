@@ -53,9 +53,7 @@ export class CaddyServerManager implements CaddyServer {
     if (!caddyInstalled) {
       console.error(pc.red('❌ Caddy is not installed or not found in PATH'))
       console.error(pc.yellow('\nTo install Caddy:'))
-      console.error(pc.gray('  • macOS: brew install caddy'))
-      console.error(pc.gray('  • Linux: apt install caddy'))
-      console.error(pc.gray('  • Windows: scoop install caddy'))
+      console.error(pc.gray(`  • ${getInstallCommand()}`))
       console.error(pc.gray('  • Or download from: https://caddyserver.com/download\n'))
       throw new Error('Caddy is not installed')
     }

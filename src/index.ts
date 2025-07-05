@@ -3,6 +3,7 @@ import type { CaddyServer, Options } from './types'
 import NodeProcess from 'node:process'
 import { createUnplugin } from 'unplugin'
 import { CaddyServerManager } from './caddy-server'
+import { printBanner } from './utilities'
 
 let caddyServer: CaddyServer | null = null
 
@@ -22,9 +23,10 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options = 
           try {
             await caddyServer!.start()
 
-            // Update server URLs to show Caddy URLs
+            // Show banner with both URLs
+            const viteUrl = `http://localhost:${targetPort}`
             const caddyUrl = caddyServer!.getUrl()
-            console.info(`  ${server.config.server.https ? '➜' : '➜'}  Caddy:   ${caddyUrl}`)
+            printBanner(caddyUrl, viteUrl)
           }
           catch (error) {
             console.error('Failed to start Caddy:', error)
