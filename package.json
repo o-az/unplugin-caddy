@@ -18,7 +18,9 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown -w",
-    "lint": "eslint .",
+    "lint": "bun x oxlint@latest",
+    "oxlint:fix": "bun x oxlint@latest --fix",
+    "lint:fix": "eslint . --fix",
     "play": "bun --filter='playground' run dev",
     "prepublishOnly": "bun run build",
     "release": "bumpp && bun publish",
@@ -92,7 +94,10 @@
     }
   },
   "dependencies": {
-    "unplugin": "^2.3.4"
+    "unplugin": "^2.3.4",
+    "execa": "^9.6.0",
+    "get-port": "^7.1.0",
+    "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.13.2",

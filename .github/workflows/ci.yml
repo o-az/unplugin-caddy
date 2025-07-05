@@ -13,13 +13,13 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: "🔑 Checkout"
+      - name: 🔑 Checkout
         uses: actions/checkout@v4
 
-      - name: "🐰 Setup Bun"
+      - name: 🐰 Setup Bun
         uses: oven-sh/setup-bun@main
         with:
-          bun-version: "latest"
+          bun-version: latest
 
       - name: Setup
         run: bun install --global @antfu/ni
@@ -39,13 +39,13 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: "🔑 Checkout"
+      - name: 🔑 Checkout
         uses: actions/checkout@v4
 
-      - name: "🐰 Setup Bun"
+      - name: 🐰 Setup Bun
         uses: oven-sh/setup-bun@main
         with:
-          bun-version: "latest"
+          bun-version: latest
 
       - name: Setup
         run: bun install --global @antfu/ni
