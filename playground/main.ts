@@ -20,9 +20,10 @@ appEl.innerHTML = `
     <li>Host: <code>${window.location.host}</code></li>
     <li>Full URL: <code>${window.location.href}</code></li>
   </ul>
-  
+
   <p>The content below should be transformed by the plugin:</p>
   <div style="padding: 10px; background: #f5f5f5; border-radius: 4px; margin-top: 10px;">
     __UNPLUGIN__
   </div>
 `
+// document.getElementById('app')!.innerHTML = '__UNPLUGIN__'

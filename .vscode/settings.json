@@ -8,7 +8,7 @@
   },
   "oxc.lint.run": "onSave",
   "oxc.flags": {
-    
+
   },
   "eslint.rules.customizations": [
     {
@@ -34,7 +34,7 @@
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "[jsonc]": {
-      "editor.defaultFormatter": "oxc.oxc-vscode"
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "[markdown]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"

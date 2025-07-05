@@ -3,12 +3,19 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## ** __EXTREMELY IMPORTANT__ **
-- You should check if a directory or file exists before creating a new one and overweiting the existing one.
 - When you are asked to make changes to the code, you should first read the code and understand the context.
 - You should then make the changes in a way that is consistent with the code and the context.
 - You should then test the changes to ensure they work as expected.
 - You should then update the documentation to reflect the changes.
 - You should not create new files or directories unless explicitly asked to do so.
+
+## Checking if Files/Directories Exist
+Before creating any new file or directory, you MUST check if it already exists:
+- For directories: Use `ls -la <parent-directory>` to see all files including hidden ones (those starting with.)
+- Alternative: Use `du -sh <directory>` to check if a directory exists and its size
+- The LS tool may not show hidden directories, so always use bash commands with proper flags
+- If `ls` doesn't show a directory, it doesn't mean it doesn't exist. Use `du` to check if it exists.
+- Never assume a directory doesn't exist just because the LS tool doesn't show it
 
 ## Project Overview
 
@@ -43,7 +50,12 @@ bun run release     # Bump version and publish to npm
 3. Users import from bundler-specific paths like `unplugin-caddy/vite`
 
 ### Current Implementation Status
-This is currently a starter template. The existing transform simply replaces `__UNPLUGIN__` with a hello message. The Caddy integration needs to be implemented.
+The Caddy integration has been implemented with the following features:
+- Automatic HTTPS with locally-trusted certificates
+- Reverse proxy to bundler's dev server with WebSocket support for HMR
+- Support for multiple domains
+- Platform-specific Caddy installation detection and guidance
+- Vite and webpack integration (other bundlers pending)
 
 ## Development Workflow
 

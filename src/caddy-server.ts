@@ -1,4 +1,4 @@
-import type { ExecaChildProcess } from 'execa'
+import type { ResultPromise } from 'execa'
 import type { CaddyServer, Options } from './types'
 import { unlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -20,7 +20,7 @@ async function checkCaddyInstalled(caddyPath: string): Promise<boolean> {
 }
 
 export class CaddyServerManager implements CaddyServer {
-  private process: ExecaChildProcess | null = null
+  private process: ResultPromise | null = null
   private caddyfilePath: string
   private port: number = 0
   private targetPort: number = 0
@@ -140,33 +140,39 @@ export class CaddyServerManager implements CaddyServer {
     const hosts = [this.options.host, ...this.options.domains].join(', ')
     const protocol = this.options.https ? 'https://' : 'http://'
 
-    const caddyfileContent = this.options.caddyfile || `
-{
-  auto_https ${this.options.https ? 'on' : 'off'}
-  ${this.options.https ? 'local_certs' : ''}
-}
+    // Build global options
+    const globalOptions: string[] = []
+    if (!this.options.https) {
+      globalOptions.push('\tauto_https off')
+    }
+    if (this.options.https) {
+      globalOptions.push('\tlocal_certs')
+    }
+    
+    const globalBlock = globalOptions.length > 0 
+      ? `{\n${globalOptions.join('\n')}\n}\n\n`
+      : ''
 
-${protocol}${hosts}:${this.port} {
-  reverse_proxy localhost:${this.targetPort}
-  
-  # Enable compression
-  encode zstd gzip
-  
-  # CORS headers for development
-  header {
-    Access-Control-Allow-Origin *
-    Access-Control-Allow-Methods *
-    Access-Control-Allow-Headers *
-  }
-  
-  # WebSocket support for HMR
-  @websockets {
-    header Connection *Upgrade*
-    header Upgrade websocket
-  }
-  reverse_proxy @websockets localhost:${this.targetPort}
-}
-`.trim()
+    const caddyfileContent = this.options.caddyfile || `${globalBlock}${protocol}${hosts}:${this.port} {
+\treverse_proxy localhost:${this.targetPort}
+
+\t# Enable compression
+\tencode zstd gzip
+
+\t# CORS headers for development
+\theader {
+\t\tAccess-Control-Allow-Origin *
+\t\tAccess-Control-Allow-Methods *
+\t\tAccess-Control-Allow-Headers *
+\t}
+
+\t# WebSocket support for HMR
+\t@websockets {
+\t\theader Connection *Upgrade*
+\t\theader Upgrade websocket
+\t}
+\treverse_proxy @websockets localhost:${this.targetPort}
+}`
 
     await writeFile(this.caddyfilePath, caddyfileContent, 'utf-8')
   }

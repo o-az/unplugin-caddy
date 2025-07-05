@@ -7,7 +7,12 @@
     "resolveJsonModule": true,
     "strict": true,
     "strictNullChecks": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": [
+      "bun",
+      "node"
+    ]
   },
+  "include": ["src", "scripts"],
   "exclude": ["dist", "eslint.config.js"]
 }

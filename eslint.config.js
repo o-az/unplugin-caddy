@@ -5,5 +5,6 @@ export default antfu({
   rules: {
     'no-console': ['off'],
     'jsonc/sort-keys': ['off'],
+    'style/max-statements-per-line': ['off'],
   },
 })
