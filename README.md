@@ -15,7 +15,7 @@ Easiest way to get `https` support for your local development.
 
 ## Install
 
-### Caddy
+Caddy
 
 [Install on other platforms](https://caddyserver.com/docs/install)
 
@@ -23,7 +23,7 @@ Easiest way to get `https` support for your local development.
 brew install caddy
 ```
 
-### unplugin-caddy
+unplugin-caddy
 
 ```bash
 npm add unplugin-caddy
@@ -129,15 +129,18 @@ build({
 })
 ```
 
-## Motivation
+<br></details>
 
-I use tailscale `funnel` whenever I need to expose a local service to the internet.
-However, it's only limited to 1 service at a time, so it's not suitable for monorepos with multiple services.
+### Motivation
 
-Alternatively, I could use `ngrok`, but the free tier is too limited and I don't need another subscription.
+From personal experience:
+
+tailscale `funnel` is great but limited to 1 service at a time,
+so it's not suitable for monorepos with multiple services.
+
+`ngrok` used to be a good option but now requires a subscription for anything beyond the trivial use case.
 
 Another options creating certificates using `mkcert` with a tool like `vite-plugin-mkcert`.
-Having tried that for a few months, I found that it's too much of an ask to expect contributors
-to enter root passwords to install certificates.
+Having tried that for a few months, I found that it's too much of an ask to expect contributors to install certificates.
 
 Caddy seems like the perfect solution.
