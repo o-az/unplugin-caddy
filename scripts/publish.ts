@@ -38,7 +38,7 @@ if (!NPM_TOKEN) {
 }
 
 const { stderr, stdout, exitCode } =
-  await Bun.$`bun publish --access="public" --verbose --no-git-checks --registry="${values.registry}" ${values['dry-run'] ? '--dry-run' : ''}`
+  await Bun.$`bun publish --access="public" --verbose --no-git-checks --registry="${values.registry}" ${Bun.env.CI ? '--provenance' : ''} ${values['dry-run'] ? '--dry-run' : ''}`
     .env({
       ...Bun.env,
       NODE_ENV: 'production',
