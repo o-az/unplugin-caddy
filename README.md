@@ -10,9 +10,20 @@
 Easiest way to get `https` support for your local development.
 
 > [!NOTE]
-> This is under active development. Nothing is guaranteed to work.
+> This is under active development. API is expected to change.
+> If you have any suggestions, I'm all ears, please open an issue.
 
 ## Install
+
+### Caddy
+
+[Install on other platforms](https://caddyserver.com/docs/install)
+
+```bash
+brew install caddy
+```
+
+### unplugin-caddy
 
 ```bash
 npm add unplugin-caddy
@@ -117,3 +128,16 @@ build({
   })]
 })
 ```
+
+## Motivation
+
+I use tailscale `funnel` whenever I need to expose a local service to the internet.
+However, it's only limited to 1 service at a time, so it's not suitable for monorepos with multiple services.
+
+Alternatively, I could use `ngrok`, but the free tier is too limited and I don't need another subscription.
+
+Another options creating certificates using `mkcert` with a tool like `vite-plugin-mkcert`.
+Having tried that for a few months, I found that it's too much of an ask to expect contributors
+to enter root passwords to install certificates.
+
+Caddy seems like the perfect solution.
