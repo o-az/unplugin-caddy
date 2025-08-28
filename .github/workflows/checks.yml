@@ -1,4 +1,4 @@
-name: CI
+name: Checks
 
 on:
   push:
@@ -32,5 +32,9 @@ jobs:
       - name: 'Lint, Typecheck, Build'
         run: |
           bun x @biomejs/biome check . --reporter='github'
-          bun run build
-          bun typecheck
+          bun tsc --project tsconfig.json --noEmit
+
+          bun tsdown --config='tsdown.config.ts'
+          
+          bun x publint@latest
+          bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'
