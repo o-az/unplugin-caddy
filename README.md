@@ -41,9 +41,12 @@ import Caddy from 'unplugin-caddy/vite'
 export default defineConfig({
   plugins: [
     Caddy({
-      https: true,
-      host: 'localhost',
-      domains: ['play.localhost'],
+      enfore: 'pre',
+      options: {
+        https: true,
+        host: 'localhost',
+        domains: ['play.localhost'],
+      }
     }),
   ],
 })
@@ -63,9 +66,12 @@ import Caddy from 'unplugin-caddy/rolldown'
 export default defineConfig({
   plugins: [
     Caddy({
-      https: true,
-      host: 'localhost',
-      domains: ['play.localhost'],
+      enforce: 'pre',
+      options: {
+        https: true,
+        host: 'localhost',
+        domains: ['play.localhost'],
+      }
     }),
   ],
 })
@@ -83,9 +89,12 @@ import Caddy from 'unplugin-caddy/rollup'
 export default {
   plugins: [
     Caddy({
-      https: true,
-      host: 'localhost',
-      domains: ['play.localhost'],
+      enforce: 'pre',
+      options: {
+        https: true,
+        host: 'localhost',
+        domains: ['play.localhost'],
+      }
     }),
   ],
 }
@@ -102,9 +111,12 @@ module.exports = {
   /* ... */
   plugins: [
     require('unplugin-caddy/webpack')({
-      https: true,
-      host: 'localhost',
-      domains: ['play.localhost'],
+      enforce: 'pre',
+      options: {
+        https: true,
+        host: 'localhost',
+        domains: ['play.localhost'],
+      }
     })
   ]
 }
@@ -122,14 +134,19 @@ import Caddy from 'unplugin-caddy/esbuild'
 
 build({
   plugins: [Caddy({
-    https: true,
-    host: 'localhost',
-    domains: ['play.localhost'],
+    enforce: 'pre',
+    options: {
+      https: true,
+      host: 'localhost',
+      domains: ['play.localhost'],
+    }
   })]
 })
 ```
 
 <br></details>
+
+_____
 
 ### Motivation
 

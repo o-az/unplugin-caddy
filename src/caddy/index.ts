@@ -31,6 +31,14 @@ export class CaddyServerManager {
     return `${protocol}://${this.#options.options.host}:${this.#options.options.port}`
   }
 
+  get domains() {
+    const domains = Array.isArray(this.#options.options.domains)
+      ? this.#options.options.domains
+      : [this.#options.options.domains]
+
+    return [this.#options.options.host, ...domains]
+  }
+
   async start() {
     if (!isCaddyInstalled()) {
       console.warn(pc.yellow('Caddy is not installed'))
@@ -39,12 +47,8 @@ export class CaddyServerManager {
     }
 
     const { port } = this.#options.server.config.server
-    const domains = Array.isArray(this.#options.options.domains)
-      ? this.#options.options.domains
-      : [this.#options.options.domains]
-
     const config = generateCaddyConfig(
-      domains,
+      this.domains,
       this.#options.options.port,
       port || this.#options.targetPort,
     )
