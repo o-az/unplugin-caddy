@@ -2,12 +2,8 @@
   "name": "unplugin-caddy",
   "version": "0.0.0-alpha.3",
   "type": "module",
-  "description": "Caddy plugin for Vite, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
+  "description": "Caddy plugin for Vite, Astro, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
   "repository": "github:o-az/unplugin-caddy",
-  "imports": {
-    "#*": "./src/*",
-    "#package.json": "./package.json"
-  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -48,35 +44,25 @@
     "test": "vitest",
     "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'"
   },
-  "workspaces": {
-    "packages": [
-      "example",
-      "playground"
-    ],
-    "catalog": {
-      "vite": "^6.3.5",
-      "typescript": "^5.8.3"
-    }
-  },
   "dependencies": {
     "unplugin": "^2.3.4",
-    "execa": "^9.6.0",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.6",
+    "@biomejs/biome": "^2.2.2",
+    "execa": "^9.6.0",
     "@rspack/core": "^1.4.4",
     "@total-typescript/ts-reset": "^0.6.1",
-    "@types/bun": "^1.2.18",
-    "@types/node": "^24.0.10",
-    "bumpp": "^10.2.0",
+    "@types/bun": "^1.2.21",
+    "@types/node": "^24.3.0",
+    "bumpp": "^10.2.3",
     "publint": "^0.3.12",
     "rollup": "^4.41.0",
-    "tsdown": "^0.12.9",
+    "tsdown": "^0.14.2",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "unplugin-unused": "^0.5.1",
-    "vitest": "^3.1.4",
+    "unplugin-unused": "^0.5.2",
+    "vitest": "^3.2.4",
     "webpack": "^5.99.9"
   },
   "peerDependencies": {
@@ -109,10 +95,20 @@
       "optional": true
     }
   },
+  "workspaces": {
+    "packages": [
+      "example",
+      "playground"
+    ],
+    "catalog": {
+      "vite": "^6.3.5",
+      "typescript": "^5.9.2"
+    }
+  },
   "license": "MIT",
-  "packageManager": "bun@1.2.18",
+  "packageManager": "bun@1.2.21",
   "homepage": "https://github.com/o-az/unplugin-caddy",
-  "author": "https://github.com/o-az",
+  "author": "Omar <omaraziz.dev@gmail.com> (https://github.com/o-az)",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -128,5 +124,9 @@
     "webpack",
     "tunnel"
   ],
+  "imports": {
+    "#*": "./src/*",
+    "#package.json": "./package.json"
+  },
   "$schema": "https://json.schemastore.org/package.json"
 }

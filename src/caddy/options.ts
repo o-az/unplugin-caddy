@@ -1,5 +1,5 @@
-import type { CaddyOptions } from './types.ts'
 import type { FilterPattern } from 'unplugin'
+import type { CaddyOptions } from '#caddy/types.ts'
 
 export type Options = {
   include?: FilterPattern

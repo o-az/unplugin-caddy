@@ -2,9 +2,9 @@
 
 [![NPM version](https://img.shields.io/npm/v/unplugin-caddy?color=a1b858&label=)](https://npm.im/unplugin-caddy)
 
-[Caddy](https://caddyserver.com) plugin for [Vite](https://vite.dev),
-[Rspack](https://rspack.rs), [esbuild](https://esbuild.github.io),
-[Rollup](https://rollupjs.org), [Rolldown](https://rolldown.rs),
+[Caddy](https://caddyserver.com) plugin for [Vite](https://vite.dev), [Rspack](https://rspack.rs),
+[esbuild](https://esbuild.github.io), [Rollup](https://rollupjs.org),
+[Rolldown](https://rolldown.rs), [Astro](https://astro.build),
 [Webpack](https://webpack.js.org), and [Farm](https://farmfe.org).
 
 Easiest way to get `https` support for your local development.
@@ -53,6 +53,29 @@ export default defineConfig({
 ```
 
 Example: [`./example/vite.config.ts`](./example/vite.config.ts)
+
+<br></details>
+
+<details>
+<summary>Astro</summary><br>
+
+```ts
+// astro.config.ts
+import Caddy from 'unplugin-caddy/astro'
+
+export default defineConfig({
+  integrations: [
+    Caddy({
+      enfore: 'pre',
+      options: {
+        https: true,
+        host: 'localhost',
+        domains: ['play.localhost'],
+      }
+    }),
+  ],
+})
+```
 
 <br></details>
 

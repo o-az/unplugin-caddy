@@ -23,7 +23,7 @@ jobs:
       id-token: write
     steps:
       - name: '🔑 Checkout'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -31,7 +31,8 @@ jobs:
         uses: oven-sh/setup-bun@main
         with:
           bun-version: latest
-          registry-url: https://registry.npmjs.org
+          registries: |
+            https://registry.npmjs.org
 
       - name: 'Install Dependencies'
         run: bun install
@@ -54,7 +55,7 @@ jobs:
       id-token: write
     steps:
       - name: '🔑 Checkout'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -62,8 +63,8 @@ jobs:
         uses: oven-sh/setup-bun@main
         with:
           bun-version: latest
-          scope: '@o-az'
-          registry-url: https://npm.pkg.github.com
+          registries: |
+            @o-az:https://npm.pkg.github.com/|$GITHUB_TOKEN
 
       - name: 'Install Dependencies'
         run: bun install

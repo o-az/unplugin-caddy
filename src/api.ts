@@ -1,1 +1,1 @@
-export {} from './caddy/index.ts'
+export {} from '#caddy/index.ts'

@@ -4,7 +4,7 @@
  * @module
  */
 
-import Caddy from './index'
+import Caddy from '#index.ts'
 
 /**
  * Rollup plugin

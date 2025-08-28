@@ -71,7 +71,7 @@ export function generateCaddyConfig(
             })),
             logs: {
               logger_names: domains.reduce((loggerNames, domain) => {
-                // @ts-ignore
+                // @ts-expect-error
                 loggerNames[domain] = 'stdout'
                 return loggerNames
               }, {}),
