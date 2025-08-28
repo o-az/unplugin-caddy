@@ -10,18 +10,22 @@
 Easiest way to get `https` support for your local development.
 
 > [!NOTE]
-> This is under active development. API is expected to change.
+> This is under active development.
 > If you have any suggestions, I'm all ears, please open an issue.
 
-## Install
+## Prerequisites
 
-Caddy
+- [Caddy](https://caddyserver.com/docs/install)
 
-[Install on other platforms](https://caddyserver.com/docs/install)
+Install on macOS:
 
 ```bash
 brew install caddy
 ```
+
+↳ [Install on other platforms](https://caddyserver.com/docs/install).
+
+## Install
 
 unplugin-caddy
 
