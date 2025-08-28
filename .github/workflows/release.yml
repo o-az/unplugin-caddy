@@ -14,11 +14,10 @@ env:
   ACTIONS_RUNNER_DEBUG: true
 
 jobs:
-  
   publish-npm:
     name: 'Publish to npm'
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 5
     env:
       REGISTRY_URL: https://registry.npmjs.org
     permissions:
@@ -54,7 +53,7 @@ jobs:
   publish-gpr:
     name: 'Publish to GitHub Package Registry'
     needs: publish-npm
-    timeout-minutes: 4
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     env:
       REGISTRY_URL: https://npm.pkg.github.com
