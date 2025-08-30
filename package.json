@@ -1,6 +1,6 @@
 {
   "name": "unplugin-caddy",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "type": "module",
   "description": "Caddy plugin for Vite, Astro, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
   "repository": "github:o-az/unplugin-caddy",
