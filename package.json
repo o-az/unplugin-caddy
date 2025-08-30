@@ -1,6 +1,6 @@
 {
   "name": "unplugin-caddy",
-  "version": "0.0.0-alpha.3",
+  "version": "0.0.0",
   "type": "module",
   "description": "Caddy plugin for Vite, Astro, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
   "repository": "github:o-az/unplugin-caddy",
@@ -35,13 +35,13 @@
   ],
   "scripts": {
     "build": "tsdown",
+    "test": "vitest",
+    "start": "bun src/index.ts",
     "check": "biome check --write . --unsafe",
     "dev": "tsdown --config='tsdown.config.ts' --watch",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "test": "vitest",
-    "changeset:version": "changeset version",
+    "changeset:version": "changeset version && biome format .",
     "changeset:publish": "changeset publish",
-    "start": "bun src/index.ts",
     "prepublishOnly": "bun run build",
     "play": "bun --filter='playground' run dev",
     "publint": "bun x publint@latest run --pack bun",
@@ -100,9 +100,6 @@
     "webpack": {
       "optional": true
     }
-  },
-  "config": {
-    "": ""
   },
   "workspaces": {
     "packages": [

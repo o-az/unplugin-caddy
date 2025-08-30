@@ -3,7 +3,10 @@ import Caddy from 'unplugin-caddy/vite'
 
 export default defineConfig({
   define: {
-    'import.meta.env.VITE_CUSTOM_DOMAIN': JSON.stringify('play.localhost:6968'),
+    'import.meta.env.VITE_CUSTOM_DOMAIN': JSON.stringify('play.localhost:7733'),
+  },
+  server: {
+    port: 77_33,
   },
   plugins: [
     Caddy({
@@ -15,7 +18,7 @@ export default defineConfig({
         host: 'localhost',
         caddyPath: 'caddy',
         caddyfile: 'Caddyfile',
-        domains: ['play.localhost'],
+        domains: ['example.localhost'],
       },
     }),
   ],

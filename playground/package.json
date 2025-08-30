@@ -7,8 +7,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "vite": "catalog:",
-    "typescript": "catalog:",
+    "vite": "^6.3.5",
+    "typescript": "^5.9.2",
     "vite-plugin-inspect": "^11.1.0"
   }
 }
