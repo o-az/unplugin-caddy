@@ -9,8 +9,8 @@ export default defineConfig({
   entry: ['src/*.ts'],
   tsconfig: 'tsconfig.json',
   unused: {
-    'ignore': {
-      'peerDependencies': Object.keys(pkg.peerDependencies || {}),
+    ignore: {
+      peerDependencies: Object.keys(pkg.peerDependencies || {}),
     },
   },
 })

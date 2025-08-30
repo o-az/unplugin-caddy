@@ -3,20 +3,24 @@
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
   },
   "files": {
     "includes": [
       "**",
-      "!**/_",
-      "!**/node_modules"
+      "!dist",
+      "!node_modules"
     ],
     "ignoreUnknown": true
   },
   "assist": {
+    "enabled": true,
     "actions": {
       "source": {
-        "organizeImports": "off"
+        "useSortedKeys": "off",
+        "organizeImports": "off",
+        "useSortedAttributes": "off"
       }
     }
   },
@@ -24,10 +28,16 @@
   "formatter": {
     "enabled": true,
     "indentWidth": 2,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "bracketSameLine": true,
+    "formatWithErrors": true,
+    "attributePosition": "auto"
   },
   "linter": {
     "enabled": true,
+    "includes": [
+      "src"
+    ],
     "rules": {
       "recommended": true,
       "complexity": {
@@ -44,8 +54,13 @@
       "style": {
         "useTemplate": "off",
         "noNonNullAssertion": "off",
-        "useNamingConvention": "off",
-        "noUnusedTemplateLiteral": "off"
+        "noUnusedTemplateLiteral": "off",
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "strictCase": false
+          }
+        }
       },
       "suspicious": {
         "noExplicitAny": "off",
@@ -56,9 +71,16 @@
     }
   },
   "json": {
+    "assist": {
+      "enabled": true
+    },
     "formatter": {
+      "lineWidth": 1,
       "enabled": true,
-      "lineWidth": 1
+      "indentWidth": 2,
+      "bracketSpacing": true,
+      "indentStyle": "space",
+      "trailingCommas": "none"
     },
     "parser": {
       "allowComments": true,
@@ -69,6 +91,9 @@
     }
   },
   "javascript": {
+    "assist": {
+      "enabled": true
+    },
     "formatter": {
       "enabled": true,
       "indentWidth": 2,
@@ -85,6 +110,9 @@
     }
   },
   "html": {
+    "parser": {
+      "interpolation": true
+    },
     "formatter": {
       "enabled": true,
       "lineWidth": 100,
@@ -97,6 +125,15 @@
     }
   },
   "css": {
+    "parser": {
+      "allowWrongLineComments": true
+    },
+    "assist": {
+      "enabled": true
+    },
+    "globals": [
+      "@apply"
+    ],
     "linter": {
       "enabled": true
     },
@@ -107,8 +144,8 @@
   "overrides": [
     {
       "includes": [
-        "**/*.json",
-        "**/*.jsonc"
+        ".json",
+        ".jsonc"
       ],
       "formatter": {
         "lineWidth": 1
@@ -128,6 +165,35 @@
         "parser": {
           "allowComments": true,
           "allowTrailingCommas": true
+        }
+      }
+    },
+    {
+      "includes": [
+        ".vue",
+        ".astro",
+        ".svelte"
+      ],
+      "formatter": {
+        "enabled": true
+      },
+      "javascript": {
+        "formatter": {
+          "enabled": true
+        }
+      },
+      "linter": {
+        "enabled": true,
+        "rules": {
+          "style": {
+            "useConst": "off",
+            "useImportType": "off"
+          },
+          "correctness": {
+            "noUnusedImports": "off",
+            "useHookAtTopLevel": "off",
+            "noUnusedVariables": "off"
+          }
         }
       }
     }

@@ -35,31 +35,34 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "dev": "tsdown --config='tsdown.config.ts' --watch",
-    "lint": "biome lint --write .",
     "check": "biome check --write . --unsafe",
-    "pretypecheck": "bun --filter=unplugin-caddy-example --filter=playground typecheck",
+    "dev": "tsdown --config='tsdown.config.ts' --watch",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "play": "bun --filter='playground' run dev",
-    "prepublishOnly": "bun run build",
-    "release": "bumpp && bun publish",
-    "start": "bun src/index.ts",
     "test": "vitest",
-    "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'"
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "start": "bun src/index.ts",
+    "prepublishOnly": "bun run build",
+    "play": "bun --filter='playground' run dev",
+    "publint": "bun x publint@latest run --pack bun",
+    "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'",
+    "check:repo": "bun run publint && bun run attw",
+    "check:types": "bun x tsc --noEmit && bun --filter=unplugin-caddy-example --filter=playground typecheck",
+    "*": "bun run build && bun run check && bun run check:types && bun run check:repo"
   },
   "dependencies": {
-    "unplugin": "^2.3.4",
+    "unplugin": "^2.3.9",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.6",
     "@rspack/core": "^1.4.4",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/bun": "^1.2.21",
     "@types/node": "^24.3.0",
-    "bumpp": "^10.2.3",
     "execa": "^9.6.0",
-    "publint": "^0.3.12",
     "rollup": "^4.41.0",
     "tsdown": "^0.14.2",
     "typescript": "catalog:",
@@ -69,10 +72,10 @@
     "webpack": "^5.99.9"
   },
   "peerDependencies": {
-    "@farmfe/core": ">=1",
+    "vite": ">=3",
     "esbuild": "*",
     "rollup": "^3",
-    "vite": ">=3",
+    "@farmfe/core": ">=1",
     "webpack": "^4 || ^5"
   },
   "peerDependenciesMeta": {
@@ -97,6 +100,9 @@
     "webpack": {
       "optional": true
     }
+  },
+  "config": {
+    "": ""
   },
   "workspaces": {
     "packages": [

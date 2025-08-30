@@ -34,6 +34,7 @@
     "tsdown.config.ts"
   ],
   "exclude": [
+    "_",
     "dist",
     "example",
     "**/_/**",
