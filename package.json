@@ -45,9 +45,9 @@
     "prepublishOnly": "bun run build",
     "play": "bun --filter='playground' run dev",
     "publint": "bun x publint@latest run --pack bun",
-    "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'",
     "check:repo": "bun run publint && bun run attw",
     "check:types": "bun x tsc --noEmit && bun --filter=unplugin-caddy-example --filter=playground typecheck",
+    "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'",
     "*": "bun run build && bun run check && bun run check:types && bun run check:repo"
   },
   "dependencies": {
