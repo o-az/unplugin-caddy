@@ -21,6 +21,7 @@ type CaddyServerManagerOptions = {
 
 export class CaddyServerManager {
   #options: CaddyServerManagerOptions
+  #isRunning = false
 
   constructor(options: CaddyServerManagerOptions) {
     this.#options = options
@@ -40,6 +41,12 @@ export class CaddyServerManager {
   }
 
   async start() {
+    // Don't start if already running
+    if (this.#isRunning && this.#options.caddyProcess?.pid) {
+      console.info(pc.cyan('🤠 Caddy is already running'))
+      return this.#options.caddyProcess
+    }
+
     if (!isCaddyInstalled()) {
       console.warn(pc.yellow('Caddy is not installed'))
       console.warn(pc.yellow(getInstallCommand()))
@@ -61,6 +68,7 @@ export class CaddyServerManager {
     })
 
     this.#options.caddyProcess = caddyProcess
+    this.#isRunning = true
 
     caddyProcess.stdout?.on('data', data => {
       console.info('^^', pc.green(data.toString()))
@@ -103,6 +111,7 @@ export class CaddyServerManager {
     })
 
     caddyProcess.on('close', code => {
+      this.#isRunning = false
       if (code === 0) return
       console.error(pc.red(`Caddy process exited with code ${code}`))
     })
@@ -132,10 +141,11 @@ export class CaddyServerManager {
   }
 
   async stop() {
-    if (!this.#options.caddyProcess?.pid) return
+    if (!this.#options.caddyProcess?.pid || !this.#isRunning) return
     try {
       NodeChildProcess.execSync(`kill -9 ${this.#options.caddyProcess.pid}`)
       NodeProcess.kill(this.#options.caddyProcess.pid, 'SIGKILL')
+      this.#isRunning = false
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -146,6 +156,7 @@ export class CaddyServerManager {
           `Failed to kill Caddy process ${this.#options.caddyProcess.pid}: ${errorMessage}`,
         ),
       )
+      this.#isRunning = false
     }
   }
 
