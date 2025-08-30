@@ -25,10 +25,14 @@
     "allowJs": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "types": [
+      "bun",
+      "node"
+    ],
     "paths": {
-      "unplugin-caddy/*": [
-        "../src/*"
-      ]
+      // "../unplugin-caddy/*": [
+      //   "../../src/*"
+      // ]
     }
   },
   "include": [

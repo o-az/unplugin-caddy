@@ -1,0 +1,20 @@
+{
+  "name": "example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "typecheck": "tsc --project tsconfig.json",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vite": "catalog:",
+    "esbuild": "catalog:",
+    "typescript": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "unplugin-caddy": "workspace:*",
+    "@total-typescript/ts-reset": "catalog:"
+  }
+}

@@ -4,12 +4,12 @@ import type { ViteDevServer } from 'vite'
 import NodeChildProcess from 'node:child_process'
 
 import {
-  isCaddyInstalled,
   writeTempFile,
+  isCaddyInstalled,
   getInstallCommand,
   generateCaddyConfig,
-} from './utilities.ts'
-import type { CaddyOptions } from './types.ts'
+} from '#caddy/utilities.ts'
+import type { CaddyOptions } from '#caddy/types.ts'
 
 type CaddyServerManagerOptions = {
   options: CaddyOptions
