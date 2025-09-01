@@ -39,6 +39,8 @@
     "scripts/**/*"
   ],
   "files": [
+    "env.d.ts",
+    "reset.d.ts",
     "biome.json",
     "package.json",
     "tsconfig.json"

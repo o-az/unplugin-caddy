@@ -40,10 +40,7 @@
     "check": "biome check --write . --unsafe",
     "dev": "tsdown --config='tsdown.config.ts' --watch",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "changeset:version": "changeset version && biome format .",
-    "changeset:publish": "changeset publish",
-    "prepublishOnly": "bun run build",
-    "play": "bun --filter='playground' run dev",
+   "prepublishOnly": "bun run build",
     "publint": "bun x publint@latest run --pack bun",
     "check:repo": "bun run publint && bun run attw",
     "check:types": "bun x tsc --noEmit && bun --filter=unplugin-caddy-example --filter=playground typecheck",
@@ -102,7 +99,6 @@
     "#package.json": "./package.json"
   },
   "license": "MIT",
-  "packageManager": "bun@1.2.21",
   "homepage": "https://github.com/o-az/unplugin-caddy",
   "author": "Omar <omaraziz.dev@gmail.com> (https://github.com/o-az)",
   "publishConfig": {
@@ -119,6 +115,5 @@
     "rolldown",
     "webpack",
     "tunnel"
-  ],
-  "$schema": "https://json.schemastore.org/package.json"
+  ]
 }

@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "alwaysStrict": true,
+    "resolvePackageJsonImports": true,
+    "strict": true,
+    "allowImportingTsExtensions": true,
+    "strictNullChecks": true,
+    "erasableSyntaxOnly": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": [
+      "bun",
+      "node"
+    ]
+  },
+  "include": [
+    "src",
+    "scripts"
+  ],
+  "files": [
+    "reset.d.ts",
+    "package.json",
+    "tsconfig.json",
+    "vite-env.d.ts",
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "_",
+    "dist",
+    "example",
+    "**/_/**",
+    "node_modules",
+    "**/node_modules/**"
+  ]
+}

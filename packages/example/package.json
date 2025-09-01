@@ -11,10 +11,12 @@
   "dependencies": {
     "vite": "catalog:",
     "esbuild": "catalog:",
+    "unplugin-caddy": "workspace:*"
+  },
+  "devDependencies": {
     "typescript": "catalog:",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "unplugin-caddy": "workspace:*",
     "@total-typescript/ts-reset": "catalog:"
   }
 }

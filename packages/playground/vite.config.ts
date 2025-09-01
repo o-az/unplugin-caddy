@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
 
-import Unplugin from '../src/vite'
+import Unplugin from 'unplugin-caddy/vite'
 
 export default defineConfig({
   server: {

@@ -40,8 +40,10 @@
     "esbuild.config.js"
   ],
   "files": [
+    "vite-env.d.ts",
     "esbuild.config.js",
     "reset.d.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "main.ts"
   ]
 }

@@ -6,6 +6,9 @@
     "dev": "vite",
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
+  "dependencies": {
+    "unplugin-caddy": "workspace:*"
+  },
   "devDependencies": {
     "vite": "catalog:",
     "typescript": "catalog:",

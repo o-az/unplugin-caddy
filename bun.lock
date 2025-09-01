@@ -21,17 +21,22 @@
     "packages/example": {
       "name": "example",
       "dependencies": {
+        "esbuild": "catalog:",
+        "unplugin-caddy": "workspace:*",
+        "vite": "catalog:",
+      },
+      "devDependencies": {
         "@total-typescript/ts-reset": "catalog:",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
-        "esbuild": "catalog:",
         "typescript": "catalog:",
-        "unplugin-caddy": "workspace:*",
-        "vite": "catalog:",
       },
     },
     "packages/playground": {
       "name": "playground",
+      "dependencies": {
+        "unplugin-caddy": "workspace:*",
+      },
       "devDependencies": {
         "@total-typescript/ts-reset": "catalog:",
         "@types/bun": "catalog:",

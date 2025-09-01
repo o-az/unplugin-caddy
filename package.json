@@ -4,6 +4,7 @@
   "scripts": {
     "test": "vitest",
     "check": "biome check --write . --unsafe",
+    "build": "bun --filter unplugin-caddy build",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "changeset:version": "changeset version && biome format .",
     "changeset:publish": "changeset publish",
