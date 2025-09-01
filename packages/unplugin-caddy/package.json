@@ -40,7 +40,7 @@
     "check": "biome check --write . --unsafe",
     "dev": "tsdown --config='tsdown.config.ts' --watch",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-   "prepublishOnly": "bun run build",
+    "prepublishOnly": "bun run build",
     "publint": "bun x publint@latest run --pack bun",
     "check:repo": "bun run publint && bun run attw",
     "check:types": "bun x tsc --noEmit && bun --filter=unplugin-caddy-example --filter=playground typecheck",
