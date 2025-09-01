@@ -39,4 +39,4 @@ jobs:
           bun --filter 'unplugin-caddy' check:repo
 
       - name: 'Preview Release'
-        run: bun x pkg.pr.new publish 'packages/unplugin-caddy'
+        run: bun x pkg-pr-new publish 'packages/unplugin-caddy'
