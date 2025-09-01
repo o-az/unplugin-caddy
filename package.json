@@ -10,8 +10,7 @@
     "changeset:publish": "changeset publish",
     "prepublishOnly": "bun run build",
     "play": "bun --filter='playground' run dev",
-    "check:repo": "bun run publint && bun run attw",
-    "check:types": "bun x tsc --noEmit && bun --filter=unplugin-caddy-example --filter=playground typecheck",
+
     "*": "bun run build && bun run check && bun run check:types && bun run check:repo"
   },
   "workspaces": {

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "build": "tsc && vite build",
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
