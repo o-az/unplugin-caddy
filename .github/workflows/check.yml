@@ -32,8 +32,8 @@ jobs:
       - name: 'Lint, Typecheck, Build'
         run: |
           bun x @biomejs/biome check . --reporter='github'
-          bun --filter '*' typecheck
-
           bun --filter 'unplugin-caddy' build
-
+          
+          bun --filter '*' typecheck
+          
           bun --filter 'unplugin-caddy' check:repo
