@@ -13,6 +13,7 @@ let caddyInitialized = false
 
 export const unpluginFactory: UnpluginFactory<Options, false> = rawOptions => {
   const { options: caddyOptions, ...options } = resolveOptions(rawOptions)
+  caddyOptions.https = caddyOptions.https ?? true
   return {
     name: PLUGIN_NAME,
     enforce: 'pre',
@@ -41,9 +42,9 @@ export const unpluginFactory: UnpluginFactory<Options, false> = rawOptions => {
               await caddyServer.start()
 
               printBanner({
-                https: caddyOptions.https,
                 verbose: caddyOptions.verbose,
                 caddyUrl: caddyServer.getUrl(),
+                https: caddyOptions.https ?? true,
                 additionalDomains: caddyOptions.domains,
                 viteUrl: `http://localhost:${targetPort}`,
               })

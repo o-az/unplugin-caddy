@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import Caddy from 'unplugin-caddy/vite'
 
+const caddyPort = 69_68
+
 export default defineConfig({
   define: {
-    'import.meta.env.VITE_CUSTOM_DOMAIN': JSON.stringify('play.localhost:7733'),
+    'import.meta.env.VITE_CUSTOM_DOMAIN': JSON.stringify(
+      `example.localhost:${caddyPort}`,
+    ),
   },
   server: {
     port: 77_33,
@@ -12,12 +16,8 @@ export default defineConfig({
     Caddy({
       enforce: 'pre',
       options: {
-        https: true,
-        port: 69_68,
         verbose: true,
-        host: 'localhost',
-        caddyPath: 'caddy',
-        caddyfile: 'Caddyfile',
+        port: caddyPort,
         domains: ['example.localhost'],
       },
     }),

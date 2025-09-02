@@ -25,6 +25,15 @@ export class CaddyServerManager {
 
   constructor(options: CaddyServerManagerOptions) {
     this.#options = options
+    this.#options.options = {
+      ...this.#options.options,
+      host: this.#options.options.host ?? 'localhost',
+      port: this.#options.options.port ?? 51_73,
+      https: this.#options.options.https ?? true,
+      verbose: this.#options.options.verbose ?? false,
+      caddyPath: this.#options.options.caddyPath ?? 'caddy',
+      caddyfile: this.#options.options.caddyfile ?? 'Caddyfile',
+    }
   }
 
   getUrl = (): string => {
@@ -55,7 +64,7 @@ export class CaddyServerManager {
 
     const { port } = this.#options.server.config.server
     const config = generateCaddyConfig(
-      this.domains,
+      this.domains.filter(Boolean),
       this.#options.options.port,
       port || this.#options.targetPort,
     )
