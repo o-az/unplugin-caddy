@@ -1,9 +1,9 @@
 import pc from 'picocolors'
 import NodeOS from 'node:os'
 import NodePath from 'node:path'
+import NodeCrypto from 'node:crypto'
 import NodeFS from 'node:fs/promises'
 import NodeChildProcess from 'node:child_process'
-import crypto from 'node:crypto'
 
 export function isCaddyInstalled() {
   let caddyIsInstalled = false
@@ -21,7 +21,7 @@ export async function writeTempFile(content: string) {
   const tempDir = NodeOS.tmpdir()
 
   // Use crypto random bytes for unpredictable filename
-  const randomBytes = crypto.randomBytes(16).toString('hex')
+  const randomBytes = NodeCrypto.randomBytes(16).toString('hex')
   const filename = `caddy-${randomBytes}.json`
   const filePath = NodePath.join(tempDir, filename)
 
@@ -158,14 +158,15 @@ export function getInstallCommand(): string {
 export function isValidDomain(domain: string): boolean {
   // Remove protocol if present
   const cleanDomain = domain.replace(/^https?:\/\//, '')
-  
+
   // Basic domain validation regex
   // Allows alphanumeric, dots, hyphens, and optional port
-  const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(:[0-9]{1,5})?$/
-  
+  const domainRegex =
+    /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(:[0-9]{1,5})?$/
+
   // Check for localhost variants
   const localhostRegex = /^(localhost|127\.0\.0\.1|\[::1\])(:[0-9]{1,5})?$/
-  
+
   return domainRegex.test(cleanDomain) || localhostRegex.test(cleanDomain)
 }
 
@@ -182,15 +183,15 @@ export function isValidPort(port: number): boolean {
 export function isValidPath(path: string): boolean {
   // Reject paths with null bytes
   if (path.includes('\0')) return false
-  
+
   // Reject paths attempting directory traversal
   const normalizedPath = NodePath.normalize(path)
   if (normalizedPath.includes('..')) return false
-  
+
   // Reject paths with shell metacharacters
   const dangerousChars = /[;&|`$()<>\\\n\r]/
   if (dangerousChars.test(path)) return false
-  
+
   return true
 }
 
@@ -203,12 +204,12 @@ export function sanitizeCaddyPath(caddyPath: string): string {
     console.warn(pc.yellow('Invalid caddy path provided, using default: caddy'))
     return 'caddy'
   }
-  
+
   // If it's just a command name (no path separators), return as is
   if (!caddyPath.includes('/') && !caddyPath.includes('\\')) {
     return caddyPath
   }
-  
+
   // For full paths, resolve and normalize
   return NodePath.resolve(caddyPath)
 }

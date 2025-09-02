@@ -4,13 +4,13 @@ import type { ViteDevServer } from 'vite'
 import NodeChildProcess from 'node:child_process'
 
 import {
+  isValidPort,
   writeTempFile,
+  isValidDomain,
   isCaddyInstalled,
   getInstallCommand,
-  generateCaddyConfig,
-  isValidDomain,
-  isValidPort,
   sanitizeCaddyPath,
+  generateCaddyConfig,
 } from '#caddy/utilities.ts'
 import type { CaddyOptions } from '#caddy/types.ts'
 
@@ -28,21 +28,25 @@ export class CaddyServerManager {
 
   constructor(options: CaddyServerManagerOptions) {
     this.#options = options
-    
+
     // Validate and sanitize inputs
     const port = this.#options.options.port ?? 51_73
     if (!isValidPort(port)) {
-      throw new Error(`Invalid port number: ${port}. Port must be between 1 and 65535.`)
+      throw new Error(
+        `Invalid port number: ${port}. Port must be between 1 and 65535.`,
+      )
     }
-    
+
     const host = this.#options.options.host ?? 'localhost'
     if (!isValidDomain(host)) {
       throw new Error(`Invalid host domain: ${host}`)
     }
-    
+
     // Sanitize caddy path to prevent command injection
-    const caddyPath = sanitizeCaddyPath(this.#options.options.caddyPath ?? 'caddy')
-    
+    const caddyPath = sanitizeCaddyPath(
+      this.#options.options.caddyPath ?? 'caddy',
+    )
+
     this.#options.options = {
       ...this.#options.options,
       host,
@@ -97,7 +101,9 @@ export class CaddyServerManager {
       port || this.#options.targetPort,
     )
 
-    const caddyConfig = await writeTempFile(JSON.stringify(config, undefined, 2))
+    const caddyConfig = await writeTempFile(
+      JSON.stringify(config, undefined, 2),
+    )
 
     // Use array-based spawn to prevent command injection
     // Use sanitized caddy path
@@ -106,7 +112,7 @@ export class CaddyServerManager {
       ['run', '--config', caddyConfig.fullPath],
       {
         shell: false,
-      }
+      },
     )
 
     this.#options.caddyProcess = caddyProcess
@@ -197,10 +203,10 @@ export class CaddyServerManager {
     try {
       // Send SIGTERM first for graceful shutdown
       NodeProcess.kill(this.#options.caddyProcess.pid, 'SIGTERM')
-      
+
       // Wait briefly for graceful shutdown
       await new Promise(resolve => setTimeout(resolve, 500))
-      
+
       // Force kill if still running
       try {
         NodeProcess.kill(this.#options.caddyProcess.pid, 'SIGKILL')
@@ -227,7 +233,8 @@ export class CaddyServerManager {
       await this.stop()
       await this.start()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
       console.error(pc.red(`Failed to restart Caddy: ${errorMessage}`))
       throw error
     }
