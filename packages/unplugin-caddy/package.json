@@ -1,0 +1,118 @@
+{
+  "name": "unplugin-caddy",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Caddy plugin for Vite, Astro, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
+  "repository": "github:o-az/unplugin-caddy",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./astro": "./dist/astro.js",
+    "./esbuild": "./dist/esbuild.js",
+    "./farm": "./dist/farm.js",
+    "./rollup": "./dist/rollup.js",
+    "./rolldown": "./dist/rolldown.js",
+    "./rspack": "./dist/rspack.js",
+    "./vite": "./dist/vite.js",
+    "./webpack": "./dist/webpack.js",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./*"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest",
+    "start": "bun src/index.ts",
+    "check": "biome check --write . --unsafe",
+    "dev": "tsdown --config='tsdown.config.ts' --watch",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "prepublishOnly": "bun run build",
+    "publint": "bun x publint@latest run --pack bun",
+    "check:repo": "bun run publint && bun run attw",
+    "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'",
+    "*": "bun run build && bun run check && bun run check:types && bun run check:repo"
+  },
+  "dependencies": {
+    "unplugin": "^2.3.9",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "rollup": "^4.41.0",
+    "tsdown": "^0.14.2",
+    "@rspack/core": "^1.4.4",
+    "typescript": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "vite": "catalog:",
+    "vitest": "^3.2.4",
+    "webpack": "^5.99.9",
+    "unplugin-unused": "^0.5.2",
+    "@total-typescript/ts-reset": "catalog:"
+  },
+  "peerDependencies": {
+    "vite": ">=3",
+    "esbuild": "catalog:",
+    "rollup": "^3",
+    "@farmfe/core": ">=1",
+    "webpack": "^4 || ^5"
+  },
+  "peerDependenciesMeta": {
+    "@farmfe/core": {
+      "optional": true
+    },
+    "esbuild": {
+      "optional": true
+    },
+    "rollup": {
+      "optional": true
+    },
+    "rolldown": {
+      "optional": true
+    },
+    "rspack": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    }
+  },
+  "imports": {
+    "#*": "./src/*",
+    "#package.json": "./package.json"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/o-az/unplugin-caddy",
+  "author": "Omar <omaraziz.dev@gmail.com> (https://github.com/o-az)",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "keywords": [
+    "caddy",
+    "https",
+    "localhost",
+    "unplugin",
+    "vite",
+    "rollup",
+    "rolldown",
+    "webpack",
+    "tunnel"
+  ]
+}

@@ -1,6 +1,7 @@
 import pc from 'picocolors'
 import NodeOS from 'node:os'
 import NodePath from 'node:path'
+import NodeCrypto from 'node:crypto'
 import NodeFS from 'node:fs/promises'
 import NodeChildProcess from 'node:child_process'
 
@@ -16,13 +17,27 @@ export function isCaddyInstalled() {
   return caddyIsInstalled
 }
 
-export function writeTempFile(content: string) {
+export async function writeTempFile(content: string) {
   const tempDir = NodeOS.tmpdir()
 
-  const filename = `caddy-${Date.now()}.json`
+  // Use crypto random bytes for unpredictable filename
+  const randomBytes = NodeCrypto.randomBytes(16).toString('hex')
+  const filename = `caddy-${randomBytes}.json`
   const filePath = NodePath.join(tempDir, filename)
 
-  NodeFS.writeFile(filePath, content)
+  try {
+    // Write file with restricted permissions (owner read/write only)
+    await NodeFS.writeFile(filePath, content, {
+      mode: 0o600,
+      flag: 'wx', // Fail if file exists
+    })
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('EEXIST')) {
+      // Retry with new filename if collision occurs
+      return writeTempFile(content)
+    }
+    throw error
+  }
 
   return {
     fullPath: filePath,
@@ -135,6 +150,68 @@ export function getInstallCommand(): string {
     if (os === 'win32') return 'scoop install caddy'
     return 'sudo apt install caddy'
   })()
+}
+
+/**
+ * Validate domain name to prevent injection attacks
+ */
+export function isValidDomain(domain: string): boolean {
+  // Remove protocol if present
+  const cleanDomain = domain.replace(/^https?:\/\//, '')
+
+  // Basic domain validation regex
+  // Allows alphanumeric, dots, hyphens, and optional port
+  const domainRegex =
+    /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(:[0-9]{1,5})?$/
+
+  // Check for localhost variants
+  const localhostRegex = /^(localhost|127\.0\.0\.1|\[::1\])(:[0-9]{1,5})?$/
+
+  return domainRegex.test(cleanDomain) || localhostRegex.test(cleanDomain)
+}
+
+/**
+ * Validate port number
+ */
+export function isValidPort(port: number): boolean {
+  return Number.isInteger(port) && port > 0 && port <= 65535
+}
+
+/**
+ * Validate and sanitize file path to prevent traversal attacks
+ */
+export function isValidPath(path: string): boolean {
+  // Reject paths with null bytes
+  if (path.includes('\0')) return false
+
+  // Reject paths attempting directory traversal
+  const normalizedPath = NodePath.normalize(path)
+  if (normalizedPath.includes('..')) return false
+
+  // Reject paths with shell metacharacters
+  const dangerousChars = /[;&|`$()<>\\\n\r]/
+  if (dangerousChars.test(path)) return false
+
+  return true
+}
+
+/**
+ * Sanitize caddy executable path
+ */
+export function sanitizeCaddyPath(caddyPath: string): string {
+  // Default to 'caddy' if invalid
+  if (!caddyPath || !isValidPath(caddyPath)) {
+    console.warn(pc.yellow('Invalid caddy path provided, using default: caddy'))
+    return 'caddy'
+  }
+
+  // If it's just a command name (no path separators), return as is
+  if (!caddyPath.includes('/') && !caddyPath.includes('\\')) {
+    return caddyPath
+  }
+
+  // For full paths, resolve and normalize
+  return NodePath.resolve(caddyPath)
 }
 
 export function formatCaddyError(error: unknown): string {

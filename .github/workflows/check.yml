@@ -32,9 +32,11 @@ jobs:
       - name: 'Lint, Typecheck, Build'
         run: |
           bun x @biomejs/biome check . --reporter='github'
-          bun tsc --project tsconfig.json --noEmit
-
-          bun x tsdown --config='tsdown.config.ts'
+          bun --filter 'unplugin-caddy' build
           
-          bun x publint@latest
-          bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'
+          bun --filter '*' typecheck
+          
+          bun --filter 'unplugin-caddy' check:repo
+
+      - name: 'Preview Release'
+        run: bun x pkg-pr-new publish 'packages/unplugin-caddy'

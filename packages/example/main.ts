@@ -33,6 +33,4 @@ appElement.innerHTML = /* html */ `
   <li>Host: <code>${window.location.host}</code></li>
   <li>Full URL: <code>${window.location.href}</code></li>
 </ul>
-
-<p>The content below should be transformed by the plugin:</p>
 `

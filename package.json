@@ -1,141 +1,44 @@
 {
-  "name": "unplugin-caddy",
-  "version": "0.0.0-alpha.3",
+  "private": true,
   "type": "module",
-  "description": "Caddy plugin for Vite, Astro, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
-  "repository": "github:o-az/unplugin-caddy",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./dist/index.js",
-    "./astro": "./dist/astro.js",
-    "./esbuild": "./dist/esbuild.js",
-    "./farm": "./dist/farm.js",
-    "./rollup": "./dist/rollup.js",
-    "./rolldown": "./dist/rolldown.js",
-    "./rspack": "./dist/rspack.js",
-    "./vite": "./dist/vite.js",
-    "./webpack": "./dist/webpack.js",
-    "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/*",
-        "./*"
-      ]
-    }
-  },
-  "files": [
-    "dist",
-    "LICENSE",
-    "README.md",
-    "package.json"
-  ],
   "scripts": {
-    "build": "tsdown",
-    "check": "biome check --write . --unsafe",
-    "dev": "tsdown --config='tsdown.config.ts' --watch",
-    "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "vitest",
-    "changeset:version": "changeset version",
+    "check": "biome check --write . --unsafe",
+    "build": "bun --filter unplugin-caddy build",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "changeset:version": "changeset version && biome format .",
     "changeset:publish": "changeset publish",
-    "start": "bun src/index.ts",
     "prepublishOnly": "bun run build",
     "play": "bun --filter='playground' run dev",
-    "publint": "bun x publint@latest run --pack bun",
-    "check:repo": "bun run publint && bun run attw",
-    "check:types": "bun x tsc --noEmit && bun --filter=unplugin-caddy-example --filter=playground typecheck",
-    "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'",
     "*": "bun run build && bun run check && bun run check:types && bun run check:repo"
-  },
-  "dependencies": {
-    "unplugin": "^2.3.9",
-    "picocolors": "^1.1.1"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.2.2",
-    "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.6",
-    "@rspack/core": "^1.4.4",
-    "@total-typescript/ts-reset": "^0.6.1",
-    "@types/bun": "^1.2.21",
-    "@types/node": "^24.3.0",
-    "execa": "^9.6.0",
-    "rollup": "^4.41.0",
-    "tsdown": "^0.14.2",
-    "typescript": "catalog:",
-    "unplugin-unused": "^0.5.2",
-    "vite": "catalog:",
-    "vitest": "^3.2.4",
-    "webpack": "^5.99.9"
-  },
-  "peerDependencies": {
-    "vite": ">=3",
-    "esbuild": "*",
-    "rollup": "^3",
-    "@farmfe/core": ">=1",
-    "webpack": "^4 || ^5"
-  },
-  "peerDependenciesMeta": {
-    "@farmfe/core": {
-      "optional": true
-    },
-    "esbuild": {
-      "optional": true
-    },
-    "rollup": {
-      "optional": true
-    },
-    "rolldown": {
-      "optional": true
-    },
-    "rspack": {
-      "optional": true
-    },
-    "vite": {
-      "optional": true
-    },
-    "webpack": {
-      "optional": true
-    }
-  },
-  "config": {
-    "": ""
   },
   "workspaces": {
     "packages": [
-      "example",
-      "playground"
+      "packages/*"
     ],
     "catalog": {
       "vite": "^6.3.5",
-      "typescript": "^5.9.2"
+      "esbuild": "^0.25.9",
+      "typescript": "^5.9.2",
+      "@types/bun": "^1.2.21",
+      "@types/node": "^24.3.0",
+      "@total-typescript/ts-reset": "^0.6.1"
     }
   },
+  "devDependencies": {
+    "unplugin": "^2.3.9",
+    "picocolors": "^1.1.1",
+    "@biomejs/biome": "^2.2.2",
+    "@changesets/cli": "^2.29.6",
+    "@changesets/changelog-github": "^0.5.1",
+    "@total-typescript/ts-reset": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "execa": "^9.6.0",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "^3.2.4"
+  },
   "license": "MIT",
-  "packageManager": "bun@1.2.21",
-  "homepage": "https://github.com/o-az/unplugin-caddy",
-  "author": "Omar <omaraziz.dev@gmail.com> (https://github.com/o-az)",
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
-  "keywords": [
-    "caddy",
-    "https",
-    "localhost",
-    "unplugin",
-    "vite",
-    "rollup",
-    "rolldown",
-    "webpack",
-    "tunnel"
-  ],
-  "imports": {
-    "#*": "./src/*",
-    "#package.json": "./package.json"
-  },
-  "$schema": "https://json.schemastore.org/package.json"
+  "packageManager": "bun@1.2.21"
 }

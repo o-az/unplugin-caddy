@@ -1,6 +1,7 @@
 # unplugin-caddy
 
 [![NPM version](https://img.shields.io/npm/v/unplugin-caddy?color=a1b858&label=)](https://npm.im/unplugin-caddy)
+[![pkg.pr.new](https://pkg.pr.new/badge/o-az/unplugin-caddy)](https://pkg.pr.new/~/o-az/unplugin-caddy)
 
 [Caddy](https://caddyserver.com) plugin for [Vite](https://vite.dev), [Rspack](https://rspack.rs),
 [esbuild](https://esbuild.github.io), [Rollup](https://rollupjs.org),

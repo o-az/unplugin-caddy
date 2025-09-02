@@ -4,7 +4,9 @@ import NodeProcess from 'node:process'
 import { execa, type ResultPromise } from 'execa'
 
 let viteProcess: ResultPromise | null = null
+let buildProcess: ResultPromise | null = null
 let vitePort: number | null = null
+let isBuilding = false
 
 async function cleanupProcess() {
   if (!viteProcess) return
@@ -29,8 +31,48 @@ async function cleanupProcess() {
   vitePort = null
 }
 
+async function buildPlugin() {
+  if (isBuilding) {
+    console.log('Build already in progress, skipping...')
+    return
+  }
+
+  isBuilding = true
+  console.log('🔨 Building plugin...')
+
+  try {
+    buildProcess = execa('bun', ['run', 'build'], {
+      stdio: 'pipe',
+      shell: false,
+    })
+
+    buildProcess.stdout?.on('data', (data: Buffer) => {
+      const output = data.toString()
+      if (output.trim()) {
+        console.log(`[build] ${output.trim()}`)
+      }
+    })
+
+    buildProcess.stderr?.on('data', (data: Buffer) => {
+      const output = data.toString()
+      if (output.trim()) {
+        console.error(`[build error] ${output.trim()}`)
+      }
+    })
+
+    await buildProcess
+    console.log('✅ Plugin build complete')
+  } catch (error) {
+    console.error('❌ Plugin build failed:', error)
+  } finally {
+    isBuilding = false
+    buildProcess = null
+  }
+}
+
 async function startVite() {
-  await cleanupProcess()
+  // Build the plugin first
+  await buildPlugin()
 
   console.log('Starting Vite...')
 
@@ -79,29 +121,38 @@ function debounce(func: () => void, wait: number) {
   }
 }
 
-const debouncedRestart = debounce(startVite, 300)
+// Only rebuild the plugin, don't restart Vite
+const debouncedBuild = debounce(buildPlugin, 300)
 
 const watcher = NodeFS.watch(
   NodePath.join(NodeProcess.cwd(), 'src'),
   { recursive: true },
   (_, filename) => {
     if (filename?.endsWith('.ts')) {
-      console.log(`Change detected: ${filename}`)
-      debouncedRestart()
+      console.log(`\n🔄 Change detected: ${filename}`)
+      // Only rebuild the plugin, Vite will pick up the changes
+      debouncedBuild()
     }
   },
 )
 
+// Start Vite once and let it run
 startVite()
 
 NodeProcess.on('SIGINT', async () => {
   console.log('\nShutting down...')
+  if (buildProcess) {
+    buildProcess.kill('SIGTERM')
+  }
   await cleanupProcess()
   watcher.close()
   NodeProcess.exit(0)
 })
 
 NodeProcess.on('SIGTERM', async () => {
+  if (buildProcess) {
+    buildProcess.kill('SIGTERM')
+  }
   await cleanupProcess()
   watcher.close()
   NodeProcess.exit(0)
@@ -109,12 +160,18 @@ NodeProcess.on('SIGTERM', async () => {
 
 NodeProcess.on('uncaughtException', async error => {
   console.error('Uncaught exception:', error)
+  if (buildProcess) {
+    buildProcess.kill('SIGTERM')
+  }
   await cleanupProcess()
   NodeProcess.exit(1)
 })
 
 NodeProcess.on('unhandledRejection', async reason => {
   console.error('Unhandled rejection:', reason)
+  if (buildProcess) {
+    buildProcess.kill('SIGTERM')
+  }
   await cleanupProcess()
   NodeProcess.exit(1)
 })

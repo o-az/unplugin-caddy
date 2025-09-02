@@ -1,0 +1,21 @@
+{
+  "name": "playground",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "unplugin-caddy": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "catalog:",
+    "typescript": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "vite-plugin-inspect": "^11.3.3",
+    "@total-typescript/ts-reset": "catalog:"
+  }
+}

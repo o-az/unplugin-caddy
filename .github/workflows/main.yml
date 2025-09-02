@@ -1,0 +1,75 @@
+name: 'Main'
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+    
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+
+jobs:
+  changesets:
+    name: 'Changesets 🦋'
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+
+    steps:
+      - name: '🔑 Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: '🐰 Setup Bun'
+        uses: oven-sh/setup-bun@main
+        with:
+          bun-version: latest
+          registries: |
+            https://registry.npmjs.org
+
+      - name: 'Install Dependencies'
+        run: bun install
+
+      - name: Configure Digital Self
+        run: |
+          set -eou pipefail
+
+          # email is in package.json#author in between `<` and `>`
+          email=$(jq -r '.author | match("<(.*?)>").captures[0].string' package.json)
+
+          git config user.name '${{ github.repository_owner }}'
+          git config user.email "$email"
+
+      - name: 'Pull Request || Publish'
+        id: changeset
+        uses: changesets/action@main
+        with:
+          setupGitUser: false
+          #
+          # When using "github-api",
+          # all commits and tags are signed using GitHub's GPG key
+          # and attributed to the user or app who owns the GITHUB_TOKEN.
+          commitMode: 'github-api'
+          #
+          publish: bun changeset:publish
+          version: bun changeset:version
+          title: 'chore: version package'
+          commit: 'chore: version package'
+          createGithubReleases: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}

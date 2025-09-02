@@ -1,44 +1,53 @@
 {
+  "schema": "https://json.schemastore.org/tsconfig.json",
   "compilerOptions": {
-    "target": "es2017",
-    "lib": [
-      "esnext",
-      "DOM"
-    ],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "alwaysStrict": true,
-    "resolvePackageJsonImports": true,
     "strict": true,
-    "allowImportingTsExtensions": true,
-    "strictNullChecks": true,
-    "erasableSyntaxOnly": true,
-    "esModuleInterop": true,
+    "baseUrl": ".",
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "lib": [
+      "ESNext"
+    ],
+    "target": "ESNext",
+    "module": "ESNext",
     "skipLibCheck": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
+    "moduleResolution": "Bundler",
+    "useDefineForClassFields": true,
+    "allowArbitraryExtensions": true,
+    "noUncheckedIndexedAccess": true,
+    "resolvePackageJsonImports": true,
+    "resolvePackageJsonExports": true,
+    "useUnknownInCatchVariables": true,
+    "allowImportingTsExtensions": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noPropertyAccessFromIndexSignature": true,
     "types": [
       "bun",
       "node"
     ]
   },
   "include": [
-    "src",
-    "scripts"
+    "scripts/**/*"
   ],
   "files": [
+    "env.d.ts",
     "reset.d.ts",
     "biome.json",
     "package.json",
-    "tsconfig.json",
-    "tsdown.config.ts"
+    "tsconfig.json"
   ],
   "exclude": [
     "_",
     "dist",
-    "example",
-    "**/_/**",
-    "node_modules",
-    "**/node_modules/**"
+    "node_modules"
   ]
 }
