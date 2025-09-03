@@ -12,8 +12,7 @@
 [Astro](https://astro.build),
 [Rspack](https://rspack.rs),
 [Farm](https://farmfe.org),
-[Webpack](https://webpack.js.org), and
-[Farm](https://farmfe.org).
+and [Webpack](https://webpack.js.org)
 
 Easiest way to get `https` support for your local development.
 
