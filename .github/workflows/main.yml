@@ -47,11 +47,8 @@ jobs:
         run: |
           set -eou pipefail
 
-          # email is in package.json#author in between `<` and `>`
-          email=$(jq -r '.author | match("<(.*?)>").captures[0].string' ./packages/unplugin-caddy/package.json)
-
-          git config user.name '${{ github.repository_owner }}'
-          git config user.email "$email"
+          git config user.name "${{ github.repository_owner }}"
+          git config user.email omaraziz.dev@gmail.com
 
       - name: 'Pull Request || Publish'
         id: changeset
