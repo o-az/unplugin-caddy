@@ -40,13 +40,6 @@ jobs:
           registries: |
             https://registry.npmjs.org
 
-      - name: 'Setup Node.js (npm auth)'
-        uses: actions/setup-node@v4
-        with:
-          cache: 'bun'
-          node-version: 'lts/*'
-          registry-url: 'https://registry.npmjs.org'
-
       - name: 'Install Dependencies'
         run: bun install --frozen-lockfile
 
