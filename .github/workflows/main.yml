@@ -48,7 +48,7 @@ jobs:
           set -eou pipefail
 
           # email is in package.json#author in between `<` and `>`
-          email=$(jq -r '.author | match("<(.*?)>").captures[0].string' ./packages/unpluggin-caddy/package.json)
+          email=$(jq -r '.author | match("<(.*?)>").captures[0].string' /packages/unplugin-caddy/package.json)
 
           git config user.name '${{ github.repository_owner }}'
           git config user.email "$email"
