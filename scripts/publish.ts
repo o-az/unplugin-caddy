@@ -37,21 +37,67 @@ if (!NPM_TOKEN) {
   NodeProcess.exit(1)
 }
 
-const { stderr, stdout, exitCode } =
-  await Bun.$`bun publish --access="public" --verbose --no-git-checks --registry="${values.registry}" ${Bun.env.CI ? '--provenance' : ''} ${values['dry-run'] ? '--dry-run' : ''}`
+async function build() {
+  const { stderr, stdout, exitCode } =
+    await Bun.$ /* sh */`bun --filter unplugin-caddy build`.env({
+      ...Bun.env,
+      NODE_ENV: 'production',
+      NODE_AUTH_TOKEN: NPM_TOKEN,
+      NPM_CONFIG_TOKEN: NPM_TOKEN,
+    })
+
+  if (exitCode !== 0) {
+    console.error(`Non-zero exit code: ${exitCode}`, stderr.toString())
+    NodeProcess.exit(1)
+  }
+
+  console.info(stdout.toString())
+  console.info('Build completed')
+}
+
+async function pack() {
+  const { stderr, stdout, exitCode } = await Bun.$ /* sh */`bun pm pack`
     .env({
       ...Bun.env,
       NODE_ENV: 'production',
+      NODE_AUTH_TOKEN: NPM_TOKEN,
       NPM_CONFIG_TOKEN: NPM_TOKEN,
     })
-    .nothrow()
+    .cwd('packages/unplugin-caddy')
 
-if (exitCode !== 0) {
-  console.error(`Non-zero exit code: ${exitCode}`, stderr.toString())
-  NodeProcess.exit(1)
+  if (exitCode !== 0) {
+    console.error(`Non-zero exit code: ${exitCode}`, stderr.toString())
+    NodeProcess.exit(1)
+  }
+
+  console.info(stdout.toString())
+  console.info('Pack completed')
 }
 
-console.info(stdout.toString())
-console.info('Published successfully')
+async function publish(registry: string) {
+  const { stderr, stdout, exitCode } =
+    await Bun.$`bun publish --access="public" --verbose --no-git-checks --registry="${values.registry}" ${Bun.env.CI ? '--provenance' : ''} ${values['dry-run'] ? '--dry-run' : ''}`
+      .env({
+        ...Bun.env,
+        NODE_ENV: 'production',
+        NODE_AUTH_TOKEN: NPM_TOKEN,
+        NPM_CONFIG_TOKEN: NPM_TOKEN,
+      })
+      .nothrow()
 
-NodeProcess.exit(0)
+  if (exitCode !== 0) {
+    console.error(`Non-zero exit code: ${exitCode}`, stderr.toString())
+    NodeProcess.exit(1)
+  }
+
+  console.info(stdout.toString())
+  console.info('Published successfully')
+}
+
+await build()
+await pack()
+
+for (const registry of values.registry) {
+  console.info(`Publishing to registry: ${registry}`)
+  await publish(registry)
+}
