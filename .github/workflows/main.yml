@@ -26,6 +26,7 @@ jobs:
       contents: write
       id-token: write
       pull-requests: write
+      actions: read
 
     steps:
       - name: '🔑 Checkout'
@@ -33,29 +34,30 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: '🐰 Setup Bun'
-        uses: oven-sh/setup-bun@main
+      - name: 'Setup Node.js'
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
-          registries: |
-            https://registry.npmjs.org
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: 'Install Dependencies'
-        run: bun install
+        run: |
+          set -eou pipefail
+
+          npm add --global bun@latest
+
+          bun install --frozen-lockfile
 
       - name: Configure Digital Self
         run: |
           set -eou pipefail
 
-          # email is in package.json#author in between `<` and `>`
-          email=$(jq -r '.author | match("<(.*?)>").captures[0].string' ./packages/unpluggin-caddy/package.json)
-
-          git config user.name '${{ github.repository_owner }}'
-          git config user.email "$email"
+          git config user.name "${{ github.repository_owner }}"
+          git config user.email omaraziz.dev@gmail.com
 
       - name: 'Pull Request || Publish'
         id: changeset
-        uses: changesets/action@main
+        uses: changesets/action@v1
         with:
           setupGitUser: false
           #
@@ -71,5 +73,6 @@ jobs:
           createGithubReleases: ${{ github.ref == 'refs/heads/main' }}
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}

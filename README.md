@@ -3,10 +3,16 @@
 [![NPM version](https://img.shields.io/npm/v/unplugin-caddy?color=a1b858&label=)](https://npm.im/unplugin-caddy)
 [![pkg.pr.new](https://pkg.pr.new/badge/o-az/unplugin-caddy)](https://pkg.pr.new/~/o-az/unplugin-caddy)
 
-[Caddy](https://caddyserver.com) plugin for [Vite](https://vite.dev), [Rspack](https://rspack.rs),
-[esbuild](https://esbuild.github.io), [Rollup](https://rollupjs.org),
-[Rolldown](https://rolldown.rs), [Astro](https://astro.build),
-[Webpack](https://webpack.js.org), and [Farm](https://farmfe.org).
+[Caddy](https://caddyserver.com) plugin for
+[Vite](https://vite.dev),
+[Rspack](https://rspack.rs),
+[esbuild](https://esbuild.github.io),
+[Rollup](https://rollupjs.org),
+[Rolldown](https://rolldown.rs),
+[Astro](https://astro.build),
+[Rspack](https://rspack.rs),
+[Farm](https://farmfe.org),
+and [Webpack](https://webpack.js.org)
 
 Easiest way to get `https` support for your local development.
 
@@ -174,7 +180,53 @@ build({
 
 <br></details>
 
-_____
+<details>
+<summary>Rspack</summary><br>
+
+```ts
+// rspack.config.js
+import Caddy from 'unplugin-caddy/rspack'
+
+module.exports = {
+  /* ... */
+  plugins: [
+    Caddy({
+      enforce: 'pre',
+      options: {
+        https: true,
+        host: 'localhost',
+        domains: ['play.localhost'],
+      }
+    })
+  ]
+}
+```
+
+<br></details>
+
+<details>
+<summary>Farm</summary><br>
+
+```ts
+// farm.config.ts
+import { defineConfig } from '@farmfe/core'
+import Caddy from 'unplugin-caddy/farm'
+
+export default defineConfig({
+  plugins: [
+    Caddy({
+      enforce: 'pre',
+      options: {
+        https: true,
+        host: 'localhost',
+        domains: ['play.localhost'],
+      }
+    })
+  ]
+})
+```
+
+<br></details>
 
 ### Motivation
 

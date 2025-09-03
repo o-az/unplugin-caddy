@@ -6,10 +6,8 @@
       "repo": "o-az/unplugin-caddy"
     }
   ],
-  "commit": false,
-  "fixed": [],
   "linked": [],
-  "ignore": [],
+  "commit": false,
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch"
