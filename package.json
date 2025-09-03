@@ -6,8 +6,8 @@
     "check": "biome check --write . --unsafe",
     "build": "bun --filter unplugin-caddy build",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "changeset:version": "changeset version && biome format .",
-    "changeset:publish": "changeset publish",
+    "changeset:version": "changeset version && biome format . --write",
+    "changeset:publish": "bun --filter unplugin-caddy build && changesets publish",
     "prepublishOnly": "bun run build",
     "play": "bun --filter='playground' run dev",
     "*": "bun run build && bun run check && bun typecheck && bun --filter unplugin-caddy check:repo"
