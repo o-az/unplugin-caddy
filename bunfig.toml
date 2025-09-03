@@ -1,7 +1,14 @@
 telemetry = false
 
-run.bun = true
-install.peer = true
+[run]
+bun = true
 
-[install.scopes]
-"unplugin-caddy" = { token = "$NPM_TOKEN", url = "https://registry.npmjs.org" }
+[install]
+peer = true
+
+[install.scopes.unplugin-caddy]
+token = "$NPM_TOKEN"
+url = "https://registry.npmjs.org"
+
+  [install.registry]
+  url = "https://registry.npmjs.org"
