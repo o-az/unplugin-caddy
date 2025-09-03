@@ -7,8 +7,7 @@
     "build": "bun --filter unplugin-caddy build",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "changeset:version": "changeset version && biome format . --write",
-    "changeset:publish": "bun --filter unplugin-caddy build && changeset publish",
-    "prepublishOnly": "bun run build",
+    "changeset:publish": "bun --filter unplugin-caddy build && bun ./scripts/publish.ts",
     "play": "bun --filter='playground' run dev",
     "*": "bun run build && bun run check && bun typecheck && bun --filter unplugin-caddy check:repo"
   },

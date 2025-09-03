@@ -76,13 +76,14 @@ async function pack() {
 
 async function publish(registry: string) {
   const { stderr, stdout, exitCode } =
-    await Bun.$`bun publish --access="public" --verbose --no-git-checks --registry="${values.registry}" ${Bun.env.CI ? '--provenance' : ''} ${values['dry-run'] ? '--dry-run' : ''}`
+    await Bun.$ /* sh */`bun publish --access="public" --verbose --no-git-checks --registry="${values.registry}" ${Bun.env.CI ? '--provenance' : ''} ${values['dry-run'] ? '--dry-run' : ''}`
       .env({
         ...Bun.env,
         NODE_ENV: 'production',
         NODE_AUTH_TOKEN: NPM_TOKEN,
         NPM_CONFIG_TOKEN: NPM_TOKEN,
       })
+      .cwd('packages/unplugin-caddy')
       .nothrow()
 
   if (exitCode !== 0) {
