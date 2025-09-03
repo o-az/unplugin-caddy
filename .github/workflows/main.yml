@@ -40,8 +40,15 @@ jobs:
           registries: |
             https://registry.npmjs.org
 
+      - name: 'Setup Node.js (npm auth)'
+        uses: actions/setup-node@v4
+        with:
+          cache: 'bun'
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+
       - name: 'Install Dependencies'
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Configure Digital Self
         run: |
@@ -55,7 +62,7 @@ jobs:
 
       - name: 'Pull Request || Publish'
         id: changeset
-        uses: changesets/action@main
+        uses: changesets/action@v1
         with:
           setupGitUser: false
           #
@@ -64,8 +71,8 @@ jobs:
           # and attributed to the user or app who owns the GITHUB_TOKEN.
           commitMode: 'github-api'
           #
-          publish: bun changeset:publish
-          version: bun changeset:version
+          publish: bun x @changesets/cli@latest publish
+          version: bun x @changesets/cli@latest version && bun x @biomejs/biome@latest check . --unsafe
           title: 'chore: version package'
           commit: 'chore: version package'
           createGithubReleases: ${{ github.ref == 'refs/heads/main' }}
