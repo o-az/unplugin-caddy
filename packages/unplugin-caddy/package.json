@@ -34,7 +34,7 @@
     "package.json"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown --config='tsdown.config.ts'",
     "test": "vitest",
     "start": "bun src/index.ts",
     "check": "biome check --write . --unsafe",
