@@ -35,8 +35,6 @@ const NPM_TOKEN =
   Bun.env.NODE_AUTH_TOKEN ||
   Bun.env.NPM_CONFIG_TOKEN
 
-console.info(NPM_TOKEN)
-
 if (!NPM_TOKEN) {
   console.warn('NPM_TOKEN is not set')
   NodeProcess.exit(1)
@@ -93,8 +91,13 @@ async function publish(registry: string) {
       --registry="${registry}" \
       --provenance=${Bun.env.PROVENANCE || true} \
       ${values['dry-run'] ? '--dry-run' : ''}`
-    .env({ NODE_ENV: 'production', NPM_TOKEN })
-    .cwd('packages/unplugin-caddy')
+    .env({
+      ...Bun.env,
+      NODE_ENV: 'production',
+      NODE_AUTH_TOKEN: NPM_TOKEN,
+      NPM_CONFIG_TOKEN: NPM_TOKEN,
+      NPM_TOKEN,
+    })
     .nothrow()
 
   if (exitCode !== 0) {
