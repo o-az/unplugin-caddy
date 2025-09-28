@@ -5,7 +5,7 @@
     "test": "vitest",
     "check": "biome check --write . --unsafe",
     "build": "bun --filter unplugin-caddy build",
-    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "typecheck": "tsc --project tsconfig.json --noEmit && bun --filter='*' typecheck",
     "changeset:version": "changeset version && biome format . --write",
     "changeset:publish": "bun ./scripts/publish.ts --registry='https://registry.npmjs.org'",
     "play": "bun --filter='playground' run dev",
