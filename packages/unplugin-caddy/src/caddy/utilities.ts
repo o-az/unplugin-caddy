@@ -231,14 +231,18 @@ export function formatCaddyError(error: unknown): string {
 
 export function printBanner(params: {
   https: boolean
-  viteUrl: string
+  targetUrl: string
+  targetLabel?: string
   caddyUrl: string
   verbose?: boolean
   additionalDomains?: Array<string>
 }): void {
   const url = new URL(params.caddyUrl)
   console.info(`\n${pc.cyan('  Unplugin Caddy is running!\n')}`)
-  console.info(pc.dim('  Vite dev server:  ') + pc.dim(params.viteUrl))
+
+  const label = params.targetLabel ?? 'Dev server'
+  console.info(pc.dim(`  ${label}:  `) + pc.dim(params.targetUrl))
+
   console.info(
     pc.green('  Caddy proxy:      ') +
       pc.green(params.caddyUrl) +

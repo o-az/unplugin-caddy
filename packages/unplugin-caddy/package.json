@@ -16,7 +16,8 @@
     "./rspack": "./dist/rspack.js",
     "./vite": "./dist/vite.js",
     "./webpack": "./dist/webpack.js",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./*": "./*"
   },
   "typesVersions": {
     "*": {
@@ -45,29 +46,30 @@
     "*": "bun run build && bun run check && bun run check:types && bun run check:repo"
   },
   "dependencies": {
-    "unplugin": "^2.3.9",
-    "picocolors": "^1.1.1"
+    "picocolors": "^1.1.1",
+    "unplugin": "^2.3.10",
+    "unplugin-utils": "^0.3.0"
   },
   "devDependencies": {
-    "rollup": "^4.41.0",
-    "tsdown": "^0.15.5",
-    "@rspack/core": "^1.4.4",
-    "typescript": "catalog:",
+    "@rspack/core": "^1.5.7",
+    "@total-typescript/ts-reset": "catalog:",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "vite": "catalog:",
-    "vitest": "^3.2.4",
-    "webpack": "^5.99.9",
     "publint": "^0.3.13",
+    "rollup": "^4.52.3",
+    "tsdown": "^0.15.5",
+    "typescript": "catalog:",
     "unplugin-unused": "^0.5.3",
-    "@total-typescript/ts-reset": "catalog:"
+    "vite": "catalog:",
+    "webpack": "^5.101.3"
   },
   "peerDependencies": {
     "vite": ">=3",
     "esbuild": "catalog:",
     "rollup": "^3",
     "@farmfe/core": ">=1",
-    "webpack": "^4 || ^5"
+    "webpack": "^4 || ^5",
+    "@rspack/core": ">=1"
   },
   "peerDependenciesMeta": {
     "@farmfe/core": {
@@ -82,7 +84,7 @@
     "rolldown": {
       "optional": true
     },
-    "rspack": {
+    "@rspack/core": {
       "optional": true
     },
     "vite": {

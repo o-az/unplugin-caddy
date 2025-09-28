@@ -9,3 +9,9 @@
   - Prevent Caddy from restarting during Hot Module Replacement (HMR)
   - Add state tracking to prevent duplicate Caddy processes
   - Ensure HTTPS localhost remains accessible during development
+
+## 0.0.3
+
+### Patch Changes
+
+- Fixed crashes when editing code. Fixed `https` not defaulting to true.

@@ -3,20 +3,26 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev:vite": "vite --config='vite.config.ts'",
+    "dev:rspack": "rspack --config='rspack.config.ts' serve",
     "build": "tsc && vite build",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
-    "vite": "catalog:",
+    "@farmfe/core": "^1.7.11",
+    "@rspack/core": "^1.5.7",
     "esbuild": "catalog:",
-    "unplugin-caddy": "workspace:*"
+    "rolldown": "^1.0.0-beta.40",
+    "rollup": "^4.52.3",
+    "vite": "catalog:",
+    "webpack": "^5.101.3"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "@rspack/cli": "^1.5.7",
+    "@total-typescript/ts-reset": "catalog:",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "@total-typescript/ts-reset": "catalog:"
+    "typescript": "catalog:"
   }
 }

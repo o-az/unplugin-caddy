@@ -15,7 +15,9 @@
     "allowImportingTsExtensions": true,
     "strictNullChecks": true,
     "erasableSyntaxOnly": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "resolvePackageJsonExports": true,
     "skipLibCheck": true,
     "types": [
       "bun",

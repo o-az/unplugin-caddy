@@ -31,9 +31,6 @@
     "no-inline-html": false,
     "no-duplicate-heading": false
   },
-  "files.exclude": {
-    ".jj": true
-  },
   "search.exclude": {
     "dist": true,
     "**/_/**": true,
