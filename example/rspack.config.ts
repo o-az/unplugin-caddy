@@ -1,7 +1,7 @@
 import rspack from '@rspack/core'
 import { defineConfig } from '@rspack/cli'
 
-import Caddy from '../unplugin-caddy/src/rspack.ts'
+import Caddy from '../packages/unplugin-caddy/src/rspack.ts'
 
 const caddyPort = 69_60
 

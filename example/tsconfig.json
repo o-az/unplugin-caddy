@@ -31,10 +31,10 @@
     ],
     "paths": {
       "#unplugin-caddy/rspack": [
-        "../unplugin-caddy/src/rspack.ts"
+        "../packages/unplugin-caddy/src/rspack.ts"
       ],
       "#unplugin-caddy/*": [
-        "../unplugin-caddy/src/*"
+        "../packages/unplugin-caddy/src/*"
       ]
     }
   },
