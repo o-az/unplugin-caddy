@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "clean": "rm -rf dist",
     "dev:vite": "vite --config='vite.config.ts'",
-    "dev:rspack": "rspack --config='rspack.config.ts' serve",
-    "build": "tsc && vite build",
+    "dev:rspack": "rspack serve --config='rspack.config.ts'",
+    "dev:webpack": "webpack serve --config='webpack.config.ts' --disable-interpret",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "preview": "vite preview"
   },
@@ -22,7 +23,12 @@
     "@rspack/cli": "^1.5.7",
     "@total-typescript/ts-reset": "catalog:",
     "@types/bun": "catalog:",
-    "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "@types/node": "^24.5.2",
+    "@types/webpack": "^5.28.5",
+    "@types/webpack-dev-server": "^4.7.2",
+    "html-webpack-plugin": "^5.6.4",
+    "tsx": "^4.20.6",
+    "typescript": "catalog:",
+    "webpack-cli": "^6.0.1"
   }
 }

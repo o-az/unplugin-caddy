@@ -1,36 +1,53 @@
-const PLUGIN_NAME = 'unplugin-caddy'
 import NodeProcess from 'node:process'
 import { createFilter } from 'unplugin-utils'
 import { createUnplugin, type UnpluginFactory } from 'unplugin'
 
-import type { Framework } from '#caddy/types.ts'
 import { printBanner } from '#caddy/utilities.ts'
 import { CaddyServerManager } from '#caddy/index.ts'
+import type { DevServer, Framework } from '#caddy/types.ts'
 import { type Options, resolveOptions } from '#caddy/options.ts'
+import type { DevServer as RspackDevServerOptions } from '@rspack/core'
+import type { Configuration as WebpackDevServerOptions } from 'webpack-dev-server'
+
+const PLUGIN_NAME = 'unplugin-caddy'
 
 // Use a singleton pattern to persist Caddy across rebuilds
 let caddyServer: CaddyServerManager<Framework> | null = null
 let caddyInitialized = false
 let processCleanupRegistered = false
 
-function cleanup() {
-  if (caddyServer) caddyServer.stop().then(() => (caddyServer = null))
-
+async function cleanup() {
+  const server = caddyServer
+  caddyServer = null
   caddyInitialized = false
   processCleanupRegistered = false
+
+  if (!server) return
+
+  try {
+    await server.stop()
+  } catch (error) {
+    console.error('unplugin-caddy: failed to stop Caddy during cleanup', error)
+  }
 }
 
-const registerProcessCleanup = () => {
+function registerProcessCleanup() {
   if (processCleanupRegistered) return
-  NodeProcess.once('SIGINT', cleanup)
-  NodeProcess.once('SIGTERM', cleanup)
+  NodeProcess.once('SIGINT', () => {
+    void cleanup()
+  })
+  NodeProcess.once('SIGTERM', () => {
+    void cleanup()
+  })
   processCleanupRegistered = true
 }
 
 const attachServerCleanup = (
   server?: { once: (event: 'close', listener: () => void) => unknown } | null,
 ) => {
-  server?.once('close', cleanup)
+  server?.once('close', () => {
+    void cleanup()
+  })
 }
 
 const normalizeHostForDisplay = (host?: string): string => {
@@ -44,6 +61,180 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
 ) => {
   const options = resolveOptions(rawOptions)
   const filter = createFilter(options.include, options.exclude)
+
+  type RsWebpackFramework = Extract<Framework, 'rspack' | 'webpack'>
+  type RsWebpackOptions<F extends RsWebpackFramework> = F extends 'rspack'
+    ? RspackDevServerOptions
+    : WebpackDevServerOptions
+
+  function hasServer(value: unknown): value is {
+    server: {
+      address?: () => unknown
+      once: (event: 'close', listener: () => void) => unknown
+    }
+  } {
+    if (typeof value !== 'object' || value === null || !('server' in value))
+      return false
+    const server = (value as { server?: unknown }).server
+    if (typeof server !== 'object' || server === null) return false
+    const once = (server as { once?: unknown }).once
+    return typeof once === 'function'
+  }
+
+  function hasHostOption(
+    value: unknown,
+  ): value is { options: { host?: string } } {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      'options' in value &&
+      typeof (value as { options?: unknown }).options === 'object' &&
+      (value as { options?: unknown }).options !== null
+    )
+  }
+
+  function getAddressPort(address: unknown): number | null {
+    if (typeof address === 'number') return address
+    if (
+      address &&
+      typeof address === 'object' &&
+      'port' in address &&
+      typeof (address as { port?: unknown }).port === 'number'
+    ) {
+      return (address as { port: number }).port
+    }
+    return null
+  }
+
+  function normalizePort(port: unknown): number | null {
+    if (port == null) return null
+    const parsed = Number(port)
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+  }
+
+  function createRsWebpackOnListeningHandler<
+    F extends RsWebpackFramework,
+  >(parameters: {
+    framework: F
+    devServerOptions: RsWebpackOptions<F>
+    userOnListening?: (devServer: DevServer<F>) => void
+  }): (devServer: DevServer<F>) => void {
+    const { framework, devServerOptions, userOnListening } = parameters
+    const targetLabel =
+      framework === 'rspack' ? 'Rspack dev server' : 'Webpack dev server'
+
+    return (devServer: DevServer<F>) => {
+      const resolveProtocol = (): 'http' | 'https' => {
+        const serverOption = devServerOptions.server
+        const type =
+          typeof serverOption === 'string'
+            ? serverOption
+            : (serverOption as { type?: string } | undefined)?.type
+
+        const normalizedType = type?.toLowerCase()
+        if (!normalizedType) return 'http'
+        return normalizedType === 'https' ||
+          normalizedType === 'http2' ||
+          normalizedType === 'spdy'
+          ? 'https'
+          : 'http'
+      }
+
+      function resolvePort() {
+        const serverPort = hasServer(devServer)
+          ? getAddressPort(devServer.server?.address?.())
+          : null
+        if (serverPort != null) return serverPort
+
+        return normalizePort(devServerOptions.port)
+      }
+
+      const ensureCaddyServer = async () => {
+        const effectivePort = resolvePort()
+
+        if (!caddyServer || caddyServer.framework !== framework) {
+          if (caddyServer) {
+            try {
+              await caddyServer.stop()
+            } catch (error) {
+              console.warn(
+                'unplugin-caddy: failed to stop existing Caddy instance',
+                error,
+              )
+            }
+          }
+
+          if (framework === 'rspack') {
+            caddyServer = new CaddyServerManager({
+              framework,
+              server: devServer as DevServer<'rspack'>,
+              targetPort: effectivePort ?? undefined,
+              options: options.options,
+            })
+          } else {
+            caddyServer = new CaddyServerManager({
+              framework,
+              server: devServer as DevServer<'webpack'>,
+              targetPort: effectivePort ?? undefined,
+              options: options.options,
+            })
+          }
+        } else if (effectivePort != null) {
+          try {
+            caddyServer.setTargetPort(effectivePort)
+          } catch (error) {
+            console.warn('unplugin-caddy: failed to update target port', error)
+          }
+        }
+
+        return effectivePort
+      }
+
+      const startCaddy = async () => {
+        if (caddyInitialized) return
+        const effectivePort = await ensureCaddyServer()
+
+        if (!caddyServer) return
+        if (effectivePort == null) {
+          console.warn(
+            `unplugin-caddy: unable to determine ${targetLabel} port, skipping Caddy startup`,
+          )
+          return
+        }
+
+        try {
+          caddyInitialized = true
+          await caddyServer.start(effectivePort)
+
+          const host = normalizeHostForDisplay(
+            (hasHostOption(devServer) ? devServer.options.host : undefined) ??
+              devServerOptions.host,
+          )
+          const protocol = resolveProtocol()
+          const targetUrl = `${protocol}://${host}:${effectivePort}`
+
+          printBanner({
+            verbose: options.options.verbose,
+            caddyUrl: caddyServer.getUrl(),
+            https: options.options.https ?? true,
+            additionalDomains: options.options.domains,
+            targetLabel,
+            targetUrl,
+          })
+        } catch (error) {
+          console.error('Failed to start Caddy:', error)
+          caddyInitialized = false
+        }
+      }
+
+      registerProcessCleanup()
+      const serverInstance = hasServer(devServer) ? devServer.server : null
+      attachServerCleanup(serverInstance ?? null)
+      void startCaddy()
+
+      userOnListening?.call(devServerOptions, devServer)
+    }
+  }
 
   return {
     name: PLUGIN_NAME,
@@ -70,6 +261,7 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
         const targetPort = server.config.server.port || 51_73
 
         if (!caddyServer || caddyServer.framework !== 'vite') {
+          if (caddyServer) void caddyServer.stop()
           caddyServer = new CaddyServerManager({
             framework: 'vite',
             server,
@@ -104,6 +296,10 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
         attachServerCleanup(server.httpServer)
       },
     },
+    farm: {},
+    rollup: {},
+    esbuild: {},
+    rolldown: {},
     rspack: compiler => {
       if (compiler.options.mode !== 'development') return
 
@@ -111,119 +307,25 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
         const devServerOptions = compiler.options.devServer
         if (!devServerOptions) return
 
-        const userOnListening = devServerOptions.onListening
+        devServerOptions.onListening = createRsWebpackOnListeningHandler({
+          framework: 'rspack',
+          devServerOptions,
+          userOnListening: devServerOptions.onListening,
+        })
+      })
+    },
+    webpack: compiler => {
+      if (compiler.options.mode !== 'development') return
 
-        devServerOptions.onListening = devServer => {
-          const resolveProtocol = (): 'http' | 'https' => {
-            const serverOption = devServerOptions.server
+      compiler.hooks.afterPlugins.tap(PLUGIN_NAME, () => {
+        const devServerOptions = compiler.options.devServer
+        if (!devServerOptions) return
 
-            const toStringType = (value: unknown): string | undefined => {
-              if (typeof value === 'string') return value
-              if (
-                value &&
-                typeof value === 'object' &&
-                'type' in value &&
-                typeof (value as { type?: unknown }).type === 'string'
-              ) {
-                return (value as { type?: string }).type
-              }
-              return undefined
-            }
-
-            const type = toStringType(serverOption)?.toLowerCase()
-            if (!type) return 'http'
-            if (type === 'https' || type === 'http2' || type === 'spdy')
-              return 'https'
-            return 'http'
-          }
-
-          const resolvePort = (): number | null => {
-            const address = devServer.server?.address()
-            if (typeof address === 'number') return address
-            if (
-              address &&
-              typeof address === 'object' &&
-              'port' in address &&
-              typeof (address as { port?: unknown }).port === 'number'
-            ) {
-              return (address as { port: number }).port
-            }
-
-            if (devServerOptions.port != null) {
-              const parsed = Number(devServerOptions.port)
-              if (!Number.isNaN(parsed) && parsed > 0) return parsed
-            }
-
-            return null
-          }
-
-          const ensureCaddyServer = () => {
-            const effectivePort = resolvePort()
-
-            if (!caddyServer || caddyServer.framework !== 'rspack') {
-              caddyServer = new CaddyServerManager({
-                framework: 'rspack',
-                server: devServer,
-                targetPort: effectivePort ?? undefined,
-                options: options.options,
-              })
-            } else if (effectivePort != null) {
-              try {
-                caddyServer.setTargetPort(effectivePort)
-              } catch (error) {
-                console.warn(
-                  'unplugin-caddy: failed to update target port',
-                  error,
-                )
-              }
-            }
-
-            return effectivePort
-          }
-
-          const startCaddy = async () => {
-            if (caddyInitialized) return
-            const effectivePort = ensureCaddyServer()
-
-            if (!caddyServer) return
-            if (effectivePort == null) {
-              console.warn(
-                'unplugin-caddy: unable to determine Rspack dev server port, skipping Caddy startup',
-              )
-              return
-            }
-
-            try {
-              caddyInitialized = true
-              await caddyServer.start(effectivePort)
-
-              const host = normalizeHostForDisplay(
-                devServer.options?.host ?? devServerOptions.host,
-              )
-              const protocol = resolveProtocol()
-              const targetUrl = `${protocol}://${host}:${effectivePort}`
-
-              printBanner({
-                verbose: options.options.verbose,
-                caddyUrl: caddyServer.getUrl(),
-                https: options.options.https ?? true,
-                additionalDomains: options.options.domains,
-                targetLabel: 'Rspack dev server',
-                targetUrl,
-              })
-            } catch (error) {
-              console.error('Failed to start Caddy:', error)
-              caddyInitialized = false
-            }
-          }
-
-          registerProcessCleanup()
-          attachServerCleanup(devServer.server)
-          void startCaddy()
-
-          if (typeof userOnListening === 'function')
-            userOnListening.call(devServerOptions, devServer)
-        }
+        devServerOptions.onListening = createRsWebpackOnListeningHandler({
+          framework: 'webpack',
+          devServerOptions,
+          userOnListening: devServerOptions.onListening,
+        })
       })
     },
   }
