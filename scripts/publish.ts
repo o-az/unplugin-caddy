@@ -82,7 +82,7 @@ async function pack() {
 async function publish(registry: string) {
   console.info(`\n\nPublishing to registry: ${registry}\n\n`)
 
-  const packedFile = `${pkgJson.name}-${pkgJson.version}.tgz`
+  const packedFile = `./packages/unplugin-caddy/${pkgJson.name}-${pkgJson.version}.tgz`
 
   const { stderr, stdout, exitCode } = await Bun.$ /* sh */`
     bun publish ${packedFile} \
