@@ -1,14 +1,20 @@
 import type { ViteDevServer } from 'vite'
 import { type UnpluginFactory } from 'unplugin'
+import type WebpackDevServer from 'webpack-dev-server'
 import type { DevServer as RspackDevServer } from '@rspack/core'
 
 type UnpluginFramework = Parameters<UnpluginFactory<any, any>>[1]['framework']
 
-export type Framework = Extract<UnpluginFramework, 'vite' | 'rspack'>
+export type Framework = Extract<
+  UnpluginFramework,
+  'vite' | 'rspack' | 'webpack'
+>
 
-export type DevServer<T extends Framework> = T extends 'rspack'
-  ? RspackDevServer
-  : ViteDevServer
+export type DevServer<T extends Framework> = T extends 'vite'
+  ? ViteDevServer
+  : T extends 'rspack'
+    ? RspackDevServer
+    : WebpackDevServer
 
 export interface CaddyServer {
   start: () => Promise<void>

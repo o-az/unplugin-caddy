@@ -61,14 +61,14 @@
     "typescript": "catalog:",
     "unplugin-unused": "^0.5.3",
     "vite": "catalog:",
-    "webpack": "^5.101.3"
+    "webpack-dev-server": "^5.2.2"
   },
   "peerDependencies": {
     "vite": ">=3",
     "esbuild": "catalog:",
     "rollup": "^3",
     "@farmfe/core": ">=1",
-    "webpack": "^4 || ^5",
+    "webpack": "^5",
     "@rspack/core": ">=1"
   },
   "peerDependenciesMeta": {

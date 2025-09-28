@@ -8,11 +8,11 @@
 - [Vite](https://vite.dev),
 - [Astro](https://astro.build),
 - [Rspack](https://rspack.rs),
+- [Webpack](https://webpack.js.org)
 - [esbuild](https://esbuild.github.io) <sup>soon</sup>
 - [Rollup](https://rollupjs.org) <sup>soon</sup>
 - [Rolldown](https://rolldown.rs) <sup>soon</sup>
 - [Farm](https://farmfe.org) <sup>soon</sup>
-- [Webpack](https://webpack.js.org) <sup>soon</sup>
 
 Easiest way to get `https` support for your local development.
 
@@ -61,7 +61,7 @@ export default defineConfig({
 })
 ```
 
-Example: [`./example/vite.config.ts`](./example/vite.config.ts)
+Example in [./example/vite.config.ts](./example/vite.config.ts): `bun --filter example dev:vite`
 
 <br></details>
 
@@ -106,6 +106,30 @@ export default {
 }
 ```
 
+Example in [./example/rspack.config.ts](./example/rspack.config.ts): `bun --filter example dev:rspack`
+
+<br></details>
+
+<details>
+<summary>Webpack</summary><br>
+
+```ts
+// webpack.config.js
+module.exports = {
+  /* ... */
+  plugins: [
+    require('unplugin-caddy/webpack')({
+      options: {
+        host: 'localhost',
+        domains: ['webpack-example.localhost'],
+      }
+    })
+  ]
+}
+```
+
+Example in [./example/webpack.config.ts](./example/webpack.config.ts): `bun --filter example dev:webpack`
+
 <br></details>
 
 <details>
@@ -145,26 +169,6 @@ export default {
       }
     }),
   ],
-}
-```
-
-<br></details>
-
-<details>
-<summary>Webpack</summary><br>
-
-```ts
-// webpack.config.js
-module.exports = {
-  /* ... */
-  plugins: [
-    require('unplugin-caddy/webpack')({
-      options: {
-        host: 'localhost',
-        domains: ['webpack-example.localhost'],
-      }
-    })
-  ]
 }
 ```
 

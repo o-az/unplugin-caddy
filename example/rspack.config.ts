@@ -11,6 +11,7 @@ export default defineConfig({
     port: 88_22,
   },
   entry: './main.ts',
+  mode: 'development',
   plugins: [
     new rspack.HtmlRspackPlugin({
       template: './index.html',
