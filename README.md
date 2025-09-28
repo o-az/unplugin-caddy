@@ -6,11 +6,11 @@
 [Caddy](https://caddyserver.com) plugin for:
 
 - [Vite](https://vite.dev),
+- [Astro](https://astro.build),
 - [Rspack](https://rspack.rs),
 - [esbuild](https://esbuild.github.io) <sup>soon</sup>
-- [Rollup](https://rollupjs.org),
-- [Rolldown](https://rolldown.rs),
-- [Astro](https://astro.build),
+- [Rollup](https://rollupjs.org) <sup>soon</sup>
+- [Rolldown](https://rolldown.rs) <sup>soon</sup>
 - [Farm](https://farmfe.org) <sup>soon</sup>
 - [Webpack](https://webpack.js.org) <sup>soon</sup>
 
@@ -52,11 +52,9 @@ import Caddy from 'unplugin-caddy/vite'
 export default defineConfig({
   plugins: [
     Caddy({
-      enfore: 'pre',
       options: {
-        https: true,
         host: 'localhost',
-        domains: ['play.localhost'],
+        domains: ['vite-example.localhost'],
       }
     }),
   ],
@@ -77,104 +75,12 @@ import Caddy from 'unplugin-caddy/astro'
 export default defineConfig({
   integrations: [
     Caddy({
-      enfore: 'pre',
       options: {
-        https: true,
         host: 'localhost',
-        domains: ['play.localhost'],
+        domains: ['astro-example.localhost'],
       }
     }),
   ],
-})
-```
-
-<br></details>
-
-<details>
-<summary>Rolldown</summary><br>
-
-```ts
-// rolldown.config.ts
-import Caddy from 'unplugin-caddy/rolldown'
-
-export default defineConfig({
-  plugins: [
-    Caddy({
-      enforce: 'pre',
-      options: {
-        https: true,
-        host: 'localhost',
-        domains: ['play.localhost'],
-      }
-    }),
-  ],
-})
-```
-
-<br></details>
-
-<details>
-<summary>Rollup</summary><br>
-
-```ts
-// rollup.config.js
-import Caddy from 'unplugin-caddy/rollup'
-
-export default {
-  plugins: [
-    Caddy({
-      enforce: 'pre',
-      options: {
-        https: true,
-        host: 'localhost',
-        domains: ['play.localhost'],
-      }
-    }),
-  ],
-}
-```
-
-<br></details>
-
-<details>
-<summary>Webpack</summary><br>
-
-```ts
-// webpack.config.js
-module.exports = {
-  /* ... */
-  plugins: [
-    require('unplugin-caddy/webpack')({
-      enforce: 'pre',
-      options: {
-        https: true,
-        host: 'localhost',
-        domains: ['play.localhost'],
-      }
-    })
-  ]
-}
-```
-
-<br></details>
-
-<details>
-<summary>esbuild</summary><br>
-
-```ts
-// esbuild.config.js
-import { build } from 'esbuild'
-import Caddy from 'unplugin-caddy/esbuild'
-
-build({
-  plugins: [Caddy({
-    enforce: 'pre',
-    options: {
-      https: true,
-      host: 'localhost',
-      domains: ['play.localhost'],
-    }
-  })]
 })
 ```
 
@@ -193,11 +99,93 @@ export default {
     Caddy({
       options: {
         host: 'localhost',
-        domains: ['play.localhost'],
+        domains: ['rspack-example.localhost'],
       }
     })
   ]
 }
+```
+
+<br></details>
+
+<details>
+<summary>Rolldown</summary><br>
+
+```ts
+// rolldown.config.ts
+import Caddy from 'unplugin-caddy/rolldown'
+
+export default defineConfig({
+  plugins: [
+    Caddy({
+      options: {
+        host: 'localhost',
+        domains: ['rolldown-example.localhost'],
+      }
+    }),
+  ],
+})
+```
+
+<br></details>
+
+<details>
+<summary>Rollup</summary><br>
+
+```ts
+// rollup.config.js
+import Caddy from 'unplugin-caddy/rollup'
+
+export default {
+  plugins: [
+    Caddy({
+      options: {
+        host: 'localhost',
+        domains: ['rollup-example.localhost'],
+      }
+    }),
+  ],
+}
+```
+
+<br></details>
+
+<details>
+<summary>Webpack</summary><br>
+
+```ts
+// webpack.config.js
+module.exports = {
+  /* ... */
+  plugins: [
+    require('unplugin-caddy/webpack')({
+      options: {
+        host: 'localhost',
+        domains: ['webpack-example.localhost'],
+      }
+    })
+  ]
+}
+```
+
+<br></details>
+
+<details>
+<summary>esbuild</summary><br>
+
+```ts
+// esbuild.config.js
+import { build } from 'esbuild'
+import Caddy from 'unplugin-caddy/esbuild'
+
+build({
+  plugins: [Caddy({
+    options: {
+      host: 'localhost',
+      domains: ['esbuild-example.localhost'],
+    }
+  })]
+})
 ```
 
 <br></details>
@@ -213,11 +201,9 @@ import Caddy from 'unplugin-caddy/farm'
 export default defineConfig({
   plugins: [
     Caddy({
-      enforce: 'pre',
       options: {
-        https: true,
         host: 'localhost',
-        domains: ['play.localhost'],
+        domains: ['farm-example.localhost'],
       }
     })
   ]
