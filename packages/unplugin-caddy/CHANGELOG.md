@@ -1,5 +1,11 @@
 # unplugin-caddy
 
+## 0.0.4
+
+### Patch Changes
+
+- [#7](https://github.com/o-az/unplugin-caddy/pull/7) [`8eb3c55`](https://github.com/o-az/unplugin-caddy/commit/8eb3c55a277f7c7421f761e28aa114593402cb9c) Thanks [@o-az](https://github.com/o-az)! - Added support for https://rspack.rs ([PR#7](https://github.com/o-az/unplugin-caddy/pull/7#issue-3461889516))
+
 ## 0.0.1
 
 ### Patch Changes
