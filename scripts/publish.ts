@@ -77,17 +77,24 @@ async function pack() {
 }
 
 async function publish(registry: string) {
-  const { stderr, stdout, exitCode } =
-    await Bun.$ /* sh */`bun publish --access="public" --verbose --no-git-checks --registry="$${registry}" ${Bun.env.CI ? '--provenance' : ''} ${values['dry-run'] ? '--dry-run' : ''}`
-      .env({
-        ...Bun.env,
-        NODE_ENV: 'production',
-        NPM_TOKEN,
-        NODE_AUTH_TOKEN: NPM_TOKEN,
-        NPM_CONFIG_TOKEN: NPM_TOKEN,
-      })
-      .cwd('packages/unplugin-caddy')
-      .nothrow()
+  console.info(`\n\nPublishing to registry: ${registry}\n\n`)
+  const { stderr, stdout, exitCode } = await Bun.$ /* sh */`
+    bun publish \
+      --access="public" \
+      --verbose \
+      --no-git-checks \
+      --registry="${registry}" \
+      ${Bun.env.CI ? '--provenance' : ''} \
+      ${values['dry-run'] ? '--dry-run' : ''}`
+    .env({
+      ...Bun.env,
+      NODE_ENV: 'production',
+      NPM_TOKEN,
+      NODE_AUTH_TOKEN: NPM_TOKEN,
+      NPM_CONFIG_TOKEN: NPM_TOKEN,
+    })
+    .cwd('packages/unplugin-caddy')
+    .nothrow()
 
   if (exitCode !== 0) {
     console.error(`Non-zero exit code: ${exitCode}`, stderr.toString())

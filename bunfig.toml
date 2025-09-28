@@ -9,3 +9,6 @@ bun = true
 [install]
 peer = true
 
+[install.registry]
+url = "https://registry.npmjs.org"
+token = "$NPM_TOKEN"
