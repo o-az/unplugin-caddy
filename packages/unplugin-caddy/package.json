@@ -58,7 +58,7 @@
     "vite": "catalog:",
     "vitest": "^3.2.4",
     "webpack": "^5.99.9",
-    "unplugin-unused": "^0.5.2",
+    "unplugin-unused": "^0.5.3",
     "@total-typescript/ts-reset": "catalog:"
   },
   "peerDependencies": {
@@ -116,6 +116,6 @@
   "repository": {
     "type": "git",
     "directory": "packages/unplugin-caddy",
-    "url": "https://github.com/o-az/unplugin-caddy.git"
+    "url": "git+https://github.com/o-az/unplugin-caddy.git"
   }
 }

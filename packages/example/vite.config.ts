@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import Caddy from 'unplugin-caddy/vite'
 
-const caddyPort = 69_68
+const caddyPort = 69_67
 
 export default defineConfig({
   define: {
