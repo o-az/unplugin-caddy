@@ -85,21 +85,15 @@ async function publish(registry: string) {
   const packedFile = `./packages/unplugin-caddy/${pkgJson.name}-${pkgJson.version}.tgz`
 
   const { stderr, stdout, exitCode } = await Bun.$ /* sh */`
-    bun publish ${packedFile} \
+    npm publish ${packedFile} \
       --access="public" \
       --verbose \
       --no-git-checks \
       --auth-type="legacy" \
       --registry="${registry}" \
-      ${Bun.env.CI ? '--provenance' : ''} \
+      --provenance=${Bun.env.PROVENANCE || true} \
       ${values['dry-run'] ? '--dry-run' : ''}`
-    .env({
-      ...Bun.env,
-      NODE_ENV: 'production',
-      NPM_TOKEN,
-      NODE_AUTH_TOKEN: NPM_TOKEN,
-      NPM_CONFIG_TOKEN: NPM_TOKEN,
-    })
+    .env({ NODE_ENV: 'production', NPM_TOKEN })
     .cwd('packages/unplugin-caddy')
     .nothrow()
 
