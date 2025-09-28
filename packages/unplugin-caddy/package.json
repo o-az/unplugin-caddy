@@ -58,6 +58,7 @@
     "vite": "catalog:",
     "vitest": "^3.2.4",
     "webpack": "^5.99.9",
+    "publint": "^0.3.13",
     "unplugin-unused": "^0.5.3",
     "@total-typescript/ts-reset": "catalog:"
   },
