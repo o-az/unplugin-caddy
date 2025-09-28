@@ -1,6 +1,11 @@
+#!/usr/bin/env bun
+
 import * as Bun from 'bun'
 import NodeUtil from 'node:util'
 import NodeProcess from 'node:process'
+
+let NPM_TOKEN =
+  Bun.env.NPM_TOKEN || Bun.env.NODE_AUTH_TOKEN || Bun.env.NPM_CONFIG_TOKEN
 
 const { values, positionals: _ } = NodeUtil.parseArgs({
   args: Bun.argv.slice(2),
@@ -22,15 +27,12 @@ const { values, positionals: _ } = NodeUtil.parseArgs({
     'npm-token': {
       type: 'string',
       multiple: false,
+      default: NPM_TOKEN,
     },
   },
 })
 
-const NPM_TOKEN =
-  values['npm-token'] ||
-  Bun.env.NPM_TOKEN ||
-  Bun.env.NODE_AUTH_TOKEN ||
-  Bun.env.NPM_CONFIG_TOKEN
+if (values['npm-token']) NPM_TOKEN = values['npm-token']
 
 if (!NPM_TOKEN) {
   console.warn('NPM_TOKEN is not set')
