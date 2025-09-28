@@ -1,5 +1,11 @@
 # unplugin-caddy
 
+## 0.0.5
+
+### Patch Changes
+
+- [#9](https://github.com/o-az/unplugin-caddy/pull/9) [`1c4bfcd`](https://github.com/o-az/unplugin-caddy/commit/1c4bfcd005be8a572917e39da12d2233f0ce94b8) Thanks [@o-az](https://github.com/o-az)! - Added support for webpack.js.org
+
 ## 0.0.4
 
 ### Patch Changes
