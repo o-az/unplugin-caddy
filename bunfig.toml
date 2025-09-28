@@ -7,8 +7,4 @@ debug = 5
 bun = true
 
 [install]
-peer = true
-
-[install.registry]
-url = "https://registry.npmjs.org"
-token = "$NPM_TOKEN"
+registry = { url = "https://registry.npmjs.org", token = "$NPM_TOKEN" }
