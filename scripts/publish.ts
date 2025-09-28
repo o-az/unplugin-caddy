@@ -3,9 +3,7 @@
 import * as Bun from 'bun'
 import NodeUtil from 'node:util'
 import NodeProcess from 'node:process'
-
-let NPM_TOKEN =
-  Bun.env.NPM_TOKEN || Bun.env.NODE_AUTH_TOKEN || Bun.env.NPM_CONFIG_TOKEN
+import pkgJson from '#unplugin-caddy/package.json' with { type: 'json' }
 
 const { values, positionals: _ } = NodeUtil.parseArgs({
   args: Bun.argv.slice(2),
@@ -27,12 +25,17 @@ const { values, positionals: _ } = NodeUtil.parseArgs({
     'npm-token': {
       type: 'string',
       multiple: false,
-      default: NPM_TOKEN,
     },
   },
 })
 
-if (values['npm-token']) NPM_TOKEN = values['npm-token']
+const NPM_TOKEN =
+  values['npm-token'] ||
+  Bun.env.NPM_TOKEN ||
+  Bun.env.NODE_AUTH_TOKEN ||
+  Bun.env.NPM_CONFIG_TOKEN
+
+console.info(NPM_TOKEN)
 
 if (!NPM_TOKEN) {
   console.warn('NPM_TOKEN is not set')
@@ -78,11 +81,15 @@ async function pack() {
 
 async function publish(registry: string) {
   console.info(`\n\nPublishing to registry: ${registry}\n\n`)
+
+  const packedFile = `${pkgJson.name}-${pkgJson.version}.tgz`
+
   const { stderr, stdout, exitCode } = await Bun.$ /* sh */`
-    bun publish \
+    bun publish ${packedFile} \
       --access="public" \
       --verbose \
       --no-git-checks \
+      --auth-type="legacy" \
       --registry="${registry}" \
       ${Bun.env.CI ? '--provenance' : ''} \
       ${values['dry-run'] ? '--dry-run' : ''}`
@@ -105,10 +112,12 @@ async function publish(registry: string) {
   console.info('Published successfully')
 }
 
-await build()
-await pack()
-
-for (const registry of values.registry) {
-  console.info(`Publishing to registry: ${registry}`)
-  await publish(registry)
-}
+build()
+  .then(() => pack())
+  .then(async () => {
+    for (const registry of values.registry) publish(registry)
+  })
+  .catch(error => {
+    console.error(error)
+    NodeProcess.exit(1)
+  })

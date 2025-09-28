@@ -11,6 +11,9 @@
     "play": "bun --filter='playground' run dev",
     "*": "bun run build && bun run check && bun typecheck && bun --filter unplugin-caddy check:repo"
   },
+  "imports": {
+    "#unplugin-caddy/*": "./packages/unplugin-caddy/*"
+  },
   "workspaces": {
     "packages": [
       "packages/*"
