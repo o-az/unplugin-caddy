@@ -16,13 +16,13 @@ if (isSecure) {
 
 const anchorElement = document.querySelector('a#custom-domain')
 if (anchorElement) {
-  console.info(import.meta.env.VITE_CUSTOM_DOMAIN)
+  console.info(import.meta.env.__CUSTOM_DOMAIN)
   anchorElement.setAttribute(
     'href',
-    `https://${import.meta.env.VITE_CUSTOM_DOMAIN}`,
+    `https://${import.meta.env.__CUSTOM_DOMAIN}`,
   )
   const text = document.createElement('code')
-  text.textContent = `https://${import.meta.env.VITE_CUSTOM_DOMAIN}`
+  text.textContent = `https://${import.meta.env.__CUSTOM_DOMAIN}`
   anchorElement.append(text)
 }
 

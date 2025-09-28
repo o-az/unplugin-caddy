@@ -1,6 +1,5 @@
 import pc from 'picocolors'
 import NodeProcess from 'node:process'
-import type { ViteDevServer } from 'vite'
 import NodeChildProcess from 'node:child_process'
 
 import {
@@ -12,63 +11,96 @@ import {
   sanitizeCaddyPath,
   generateCaddyConfig,
 } from '#caddy/utilities.ts'
-import type { CaddyOptions } from '#caddy/types.ts'
+import type { CaddyOptions, DevServer, Framework } from '#caddy/types.ts'
 
-type CaddyServerManagerOptions = {
-  options: CaddyOptions
-  targetPort: number
-  caddyPath: string
-  server: ViteDevServer
-  caddyProcess: NodeChildProcess.ChildProcess
+type FrameworkBindings = {
+  [F in Framework]: {
+    framework: F
+    server: DevServer<F>
+  }
 }
 
-export class CaddyServerManager {
-  #options: CaddyServerManagerOptions
-  #isRunning = false
+type CaddyServerManagerOptions<T extends Framework> = FrameworkBindings[T] & {
+  options: CaddyOptions
+  targetPort?: number
+}
 
-  constructor(options: CaddyServerManagerOptions) {
-    this.#options = options
+type NormalizedCaddyOptions = CaddyOptions & {
+  host: string
+  port: number
+  https: boolean
+  verbose: boolean
+  caddyPath: string
+  caddyfile: string
+}
 
-    // Validate and sanitize inputs
-    const port = this.#options.options.port ?? 51_73
-    if (!isValidPort(port)) {
-      throw new Error(
-        `Invalid port number: ${port}. Port must be between 1 and 65535.`,
-      )
-    }
-
-    const host = this.#options.options.host ?? 'localhost'
-    if (!isValidDomain(host)) {
-      throw new Error(`Invalid host domain: ${host}`)
-    }
-
-    // Sanitize caddy path to prevent command injection
-    const caddyPath = sanitizeCaddyPath(
-      this.#options.options.caddyPath ?? 'caddy',
+function normalizeCaddyOptions(options: CaddyOptions): NormalizedCaddyOptions {
+  const port = options.port ?? 69_69
+  if (!isValidPort(port)) {
+    throw new Error(
+      `Invalid port number: ${port}. Port must be between 1 and 65535.`,
     )
+  }
 
-    this.#options.options = {
-      ...this.#options.options,
-      host,
-      port,
-      https: this.#options.options.https ?? true,
-      verbose: this.#options.options.verbose ?? false,
-      caddyPath,
-      caddyfile: this.#options.options.caddyfile ?? 'Caddyfile',
+  const host = options.host ?? 'localhost'
+  if (!isValidDomain(host)) {
+    throw new Error(`Invalid host domain: ${host}`)
+  }
+
+  const caddyPath = sanitizeCaddyPath(options.caddyPath ?? 'caddy')
+
+  return {
+    ...options,
+    host,
+    port,
+    https: options.https ?? true,
+    verbose: options.verbose ?? false,
+    caddyPath,
+    caddyfile: options.caddyfile ?? 'Caddyfile',
+  }
+}
+
+export class CaddyServerManager<T extends Framework> {
+  #framework: T
+  #options: NormalizedCaddyOptions
+  #targetPort: number | null
+  #process: NodeChildProcess.ChildProcess | null = null
+  #isRunning = false
+  #viteServer: DevServer<'vite'> | null = null
+
+  constructor(options: CaddyServerManagerOptions<T>) {
+    this.#framework = options.framework
+    this.#targetPort = options.targetPort ?? null
+    this.#options = normalizeCaddyOptions(options.options)
+
+    if (options.framework === 'vite') {
+      this.#viteServer = options.server as DevServer<'vite'>
     }
+  }
+
+  get framework(): T {
+    return this.#framework
+  }
+
+  setTargetPort(port: number): void {
+    if (!isValidPort(port))
+      throw new Error(
+        `Invalid target port: ${port}. Port must be between 1 and 65535.`,
+      )
+
+    this.#targetPort = port
   }
 
   getUrl = (): string => {
-    const protocol = this.#options.options.https ? 'https' : 'http'
-    return `${protocol}://${this.#options.options.host}:${this.#options.options.port}`
+    const protocol = this.#options.https ? 'https' : 'http'
+    return `${protocol}://${this.#options.host}:${this.#options.port}`
   }
 
   get domains() {
-    const domains = Array.isArray(this.#options.options.domains)
-      ? this.#options.options.domains
-      : [this.#options.options.domains]
+    const domains = Array.isArray(this.#options.domains)
+      ? this.#options.domains
+      : [this.#options.domains]
 
-    // Validate all domains
     const validatedDomains = domains.filter(domain => {
       if (!domain) return false
       if (!isValidDomain(domain)) {
@@ -78,14 +110,13 @@ export class CaddyServerManager {
       return true
     })
 
-    return [this.#options.options.host, ...validatedDomains]
+    return [this.#options.host, ...validatedDomains]
   }
 
-  async start() {
-    // Don't start if already running
-    if (this.#isRunning && this.#options.caddyProcess?.pid) {
+  async start(targetPortOverride?: number) {
+    if (this.#isRunning && this.#process?.pid) {
       console.info(pc.cyan('🤠 Caddy is already running'))
-      return this.#options.caddyProcess
+      return this.#process
     }
 
     if (!isCaddyInstalled()) {
@@ -94,28 +125,33 @@ export class CaddyServerManager {
       return
     }
 
-    const { port } = this.#options.server.config.server
+    if (typeof targetPortOverride === 'number')
+      this.setTargetPort(targetPortOverride)
+
+    if (this.#targetPort == null)
+      throw new Error(
+        'Target port is not set. Please provide a valid dev server port.',
+      )
+
     const config = generateCaddyConfig(
       this.domains.filter(Boolean),
-      this.#options.options.port,
-      port || this.#options.targetPort,
+      this.#options.port,
+      this.#targetPort,
     )
 
     const caddyConfig = await writeTempFile(
       JSON.stringify(config, undefined, 2),
     )
 
-    // Use array-based spawn to prevent command injection
-    // Use sanitized caddy path
     const caddyProcess = NodeChildProcess.spawn(
-      this.#options.options.caddyPath!,
+      this.#options.caddyPath,
       ['run', '--config', caddyConfig.fullPath],
       {
         shell: false,
       },
     )
 
-    this.#options.caddyProcess = caddyProcess
+    this.#process = caddyProcess
     this.#isRunning = true
 
     caddyProcess.stdout?.on('data', data => {
@@ -134,7 +170,7 @@ export class CaddyServerManager {
           [key: string]: unknown
         }
 
-        if (!this.#options.options.verbose && log.level === 'info') return
+        if (!this.#options.verbose && log.level === 'info') return
 
         const prefix =
           log.level === 'error'
@@ -154,77 +190,77 @@ export class CaddyServerManager {
 
         console.log(`${prefix} ${color(log.msg || message)}`)
       } catch {
-        if (this.#options.options.verbose) console.log(`📝 ${pc.gray(message)}`)
+        if (this.#options.verbose) console.log(`📝 ${pc.gray(message)}`)
       }
     })
 
     caddyProcess.on('close', code => {
       this.#isRunning = false
+      this.#process = null
       if (code === 0) return
       console.error(pc.red(`Caddy process exited with code ${code}`))
     })
 
     console.info(pc.green(`🤠 Caddy has got your back. It's on cranking¬…`))
 
-    this.#options.server.httpServer?.on('close', () => {
-      console.info(pc.yellow('Caddy is shutting down…'))
-      if (!this.#options.caddyProcess.pid) return
-      try {
-        // Use NodeProcess.kill directly to avoid shell injection
-        NodeProcess.kill(this.#options.caddyProcess.pid, 'SIGTERM')
-        // Give process time to terminate gracefully
-        setTimeout(() => {
-          try {
-            if (this.#options.caddyProcess.pid) {
-              NodeProcess.kill(this.#options.caddyProcess.pid, 'SIGKILL')
+    if (this.#isViteContext()) {
+      this.#viteServer?.httpServer?.on('close', () => {
+        console.info(pc.yellow('Caddy is shutting down…'))
+        const pid = this.#process?.pid
+        if (!pid) return
+        try {
+          NodeProcess.kill(pid, 'SIGTERM')
+          setTimeout(() => {
+            try {
+              if (this.#process?.pid) {
+                NodeProcess.kill(this.#process.pid, 'SIGKILL')
+              }
+            } catch {
+              // Process already terminated
             }
-          } catch {
-            // Process already terminated
-          }
-        }, 1000)
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : 'Caddy process is not running or not found'
-        console.error(
-          pc.red(
-            `Failed to kill Caddy process ${this.#options.caddyProcess.pid}: ${errorMessage}`,
-          ),
-        )
-      }
-    })
+          }, 1000)
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : 'Caddy process is not running or not found'
+          console.error(
+            pc.red(`Failed to kill Caddy process ${pid}: ${errorMessage}`),
+          )
+        }
+      })
+    }
 
     return caddyProcess
   }
 
   async stop() {
-    if (!this.#options.caddyProcess?.pid || !this.#isRunning) return
-    try {
-      // Send SIGTERM first for graceful shutdown
-      NodeProcess.kill(this.#options.caddyProcess.pid, 'SIGTERM')
+    const pid = this.#process?.pid
+    if (!pid || !this.#isRunning) return
 
-      // Wait briefly for graceful shutdown
+    try {
+      NodeProcess.kill(pid, 'SIGTERM')
+
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      // Force kill if still running
       try {
-        NodeProcess.kill(this.#options.caddyProcess.pid, 'SIGKILL')
+        NodeProcess.kill(pid, 'SIGKILL')
       } catch {
         // Process already terminated
       }
+
       this.#isRunning = false
+      this.#process = null
     } catch (error) {
       const errorMessage =
         error instanceof Error
           ? error.message
           : 'Caddy process is not running or not found'
       console.error(
-        pc.red(
-          `Failed to kill Caddy process ${this.#options.caddyProcess.pid}: ${errorMessage}`,
-        ),
+        pc.red(`Failed to kill Caddy process ${pid}: ${errorMessage}`),
       )
       this.#isRunning = false
+      this.#process = null
     }
   }
 
@@ -238,5 +274,9 @@ export class CaddyServerManager {
       console.error(pc.red(`Failed to restart Caddy: ${errorMessage}`))
       throw error
     }
+  }
+
+  #isViteContext(): this is CaddyServerManager<'vite'> {
+    return this.#framework === 'vite'
   }
 }

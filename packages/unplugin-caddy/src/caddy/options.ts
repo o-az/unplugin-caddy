@@ -10,6 +10,11 @@ import type { CaddyOptions } from '#caddy/types.ts'
 export type Options = {
   include?: FilterPattern
   exclude?: FilterPattern
+  /**
+   * The order of the plugin.
+   *
+   * @default 'pre'
+   */
   enforce?: 'pre' | 'post' | undefined
   options?: CaddyOptions | undefined
 }
@@ -37,9 +42,7 @@ export function resolveOptions(options: Options): OptionsResolved {
 
   // Validate host if provided
   const host = options.options?.host ?? 'localhost'
-  if (!isValidDomain(host)) {
-    throw new Error(`Invalid host domain: ${host}`)
-  }
+  if (!isValidDomain(host)) throw new Error(`Invalid host domain: ${host}`)
 
   // Sanitize caddy path
   const caddyPath = sanitizeCaddyPath(options.options?.caddyPath ?? 'caddy')

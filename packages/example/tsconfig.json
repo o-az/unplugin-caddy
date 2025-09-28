@@ -19,10 +19,10 @@
 
     /* Linting */
     "strict": true,
+    "allowJs": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "allowJs": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "types": [
@@ -30,20 +30,17 @@
       "node"
     ],
     "paths": {
-      // "../unplugin-caddy/*": [
-      //   "../../src/*"
-      // ]
+      "#unplugin-caddy/rspack": [
+        "../unplugin-caddy/src/rspack.ts"
+      ],
+      "#unplugin-caddy/*": [
+        "../unplugin-caddy/src/*"
+      ]
     }
   },
   "include": [
     "**/*.ts",
-    "esbuild.config.js"
-  ],
-  "files": [
-    "vite-env.d.ts",
-    "esbuild.config.js",
-    "reset.d.ts",
-    "vite.config.ts",
-    "main.ts"
+    "**/*.js",
+    "**/*.mjs"
   ]
 }

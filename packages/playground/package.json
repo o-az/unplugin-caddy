@@ -11,11 +11,11 @@
     "unplugin-caddy": "workspace:*"
   },
   "devDependencies": {
-    "vite": "catalog:",
-    "typescript": "catalog:",
+    "@total-typescript/ts-reset": "catalog:",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "vite-plugin-inspect": "^11.3.3",
-    "@total-typescript/ts-reset": "catalog:"
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-inspect": "^11.3.3"
   }
 }

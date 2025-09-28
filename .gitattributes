@@ -1,0 +1,6 @@
+* text=auto eol=lf
+
+.env.* linguist-language=Dotenv
+
+biome.json linguist-language=Json-With-Comments
+.vscode/*.json linguist-language=Json-With-Comments

@@ -3,16 +3,16 @@
 [![NPM version](https://img.shields.io/npm/v/unplugin-caddy?color=a1b858&label=)](https://npm.im/unplugin-caddy)
 [![pkg.pr.new](https://pkg.pr.new/badge/o-az/unplugin-caddy)](https://pkg.pr.new/~/o-az/unplugin-caddy)
 
-[Caddy](https://caddyserver.com) plugin for
-[Vite](https://vite.dev),
-[Rspack](https://rspack.rs),
-[esbuild](https://esbuild.github.io),
-[Rollup](https://rollupjs.org),
-[Rolldown](https://rolldown.rs),
-[Astro](https://astro.build),
-[Rspack](https://rspack.rs),
-[Farm](https://farmfe.org),
-and [Webpack](https://webpack.js.org)
+[Caddy](https://caddyserver.com) plugin for:
+
+- [Vite](https://vite.dev),
+- [Rspack](https://rspack.rs),
+- [esbuild](https://esbuild.github.io) <sup>soon</sup>
+- [Rollup](https://rollupjs.org),
+- [Rolldown](https://rolldown.rs),
+- [Astro](https://astro.build),
+- [Farm](https://farmfe.org) <sup>soon</sup>
+- [Webpack](https://webpack.js.org) <sup>soon</sup>
 
 Easiest way to get `https` support for your local development.
 
@@ -184,16 +184,14 @@ build({
 <summary>Rspack</summary><br>
 
 ```ts
-// rspack.config.js
+// rspack.config.mjs
 import Caddy from 'unplugin-caddy/rspack'
 
-module.exports = {
+export default {
   /* ... */
   plugins: [
     Caddy({
-      enforce: 'pre',
       options: {
-        https: true,
         host: 'localhost',
         domains: ['play.localhost'],
       }
