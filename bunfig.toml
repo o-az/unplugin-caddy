@@ -5,5 +5,3 @@ debug = 5
 
 [run]
 bun = true
-
-[install]
