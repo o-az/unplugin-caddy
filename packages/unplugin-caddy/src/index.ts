@@ -2,6 +2,7 @@ import NodeProcess from 'node:process'
 import { createFilter } from 'unplugin-utils'
 import { createUnplugin, type UnpluginFactory } from 'unplugin'
 
+import { logger } from '#utilities.ts'
 import { printBanner } from '#caddy/utilities.ts'
 import { CaddyServerManager } from '#caddy/index.ts'
 import type { DevServer, Framework } from '#caddy/types.ts'
@@ -27,7 +28,7 @@ async function cleanup() {
   try {
     await server.stop()
   } catch (error) {
-    console.error('unplugin-caddy: failed to stop Caddy during cleanup', error)
+    logger.error('unplugin-caddy: failed to stop Caddy during cleanup', error)
   }
 }
 
@@ -157,7 +158,7 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
             try {
               await caddyServer.stop()
             } catch (error) {
-              console.warn(
+              logger.warn(
                 'unplugin-caddy: failed to stop existing Caddy instance',
                 error,
               )
@@ -183,7 +184,7 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
           try {
             caddyServer.setTargetPort(effectivePort)
           } catch (error) {
-            console.warn('unplugin-caddy: failed to update target port', error)
+            logger.warn('unplugin-caddy: failed to update target port', error)
           }
         }
 
@@ -196,7 +197,7 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
 
         if (!caddyServer) return
         if (effectivePort == null) {
-          console.warn(
+          logger.warn(
             `unplugin-caddy: unable to determine ${targetLabel} port, skipping Caddy startup`,
           )
           return
@@ -222,7 +223,7 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
             targetUrl,
           })
         } catch (error) {
-          console.error('Failed to start Caddy:', error)
+          logger.error('Failed to start Caddy:', error)
           caddyInitialized = false
         }
       }
@@ -286,7 +287,7 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
                 targetUrl: `http://localhost:${targetPort}`,
               })
             } catch (error) {
-              console.error('Failed to start Caddy:', error)
+              logger.error('Failed to start Caddy:', error)
               caddyInitialized = false
             }
           })

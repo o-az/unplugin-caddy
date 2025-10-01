@@ -11,6 +11,7 @@ import {
   sanitizeCaddyPath,
   generateCaddyConfig,
 } from '#caddy/utilities.ts'
+import { logger } from '#utilities.ts'
 import type { CaddyOptions, DevServer, Framework } from '#caddy/types.ts'
 
 type FrameworkBindings = {
@@ -104,7 +105,7 @@ export class CaddyServerManager<T extends Framework> {
     const validatedDomains = domains.filter(domain => {
       if (!domain) return false
       if (!isValidDomain(domain)) {
-        console.warn(pc.yellow(`Invalid domain ignored: ${domain}`))
+        logger.warn(pc.yellow(`Invalid domain ignored: ${domain}`))
         return false
       }
       return true
@@ -115,13 +116,13 @@ export class CaddyServerManager<T extends Framework> {
 
   async start(targetPortOverride?: number) {
     if (this.#isRunning && this.#process?.pid) {
-      console.info(pc.cyan('🤠 Caddy is already running'))
+      logger.info(pc.cyan('\n🤠 Caddy is already running'))
       return this.#process
     }
 
     if (!isCaddyInstalled()) {
-      console.warn(pc.yellow('Caddy is not installed'))
-      console.warn(pc.yellow(getInstallCommand()))
+      logger.warn(pc.yellow('Caddy is not installed'))
+      logger.warn(pc.yellow(getInstallCommand()))
       return
     }
 
@@ -155,7 +156,7 @@ export class CaddyServerManager<T extends Framework> {
     this.#isRunning = true
 
     caddyProcess.stdout?.on('data', data => {
-      console.info('^^', pc.green(data.toString()))
+      logger.info('^^', pc.green(data.toString()))
     })
 
     caddyProcess.stderr?.on('data', data => {
@@ -188,9 +189,9 @@ export class CaddyServerManager<T extends Framework> {
               ? pc.yellow
               : pc.blue
 
-        console.log(`${prefix} ${color(log.msg || message)}`)
+        logger.info(`${prefix} ${color(log.msg || message)}`)
       } catch {
-        if (this.#options.verbose) console.log(`📝 ${pc.gray(message)}`)
+        if (this.#options.verbose) logger.info(`📝 ${pc.gray(message)}`)
       }
     })
 
@@ -198,14 +199,14 @@ export class CaddyServerManager<T extends Framework> {
       this.#isRunning = false
       this.#process = null
       if (code === 0) return
-      console.error(pc.red(`Caddy process exited with code ${code}`))
+      logger.error(pc.red(`Caddy process exited with code ${code}`))
     })
 
-    console.info(pc.green(`🤠 Caddy has got your back. It's on cranking¬…`))
+    logger.box(`🤠 Caddy is cranking¬…`)
 
     if (this.#isViteContext()) {
       this.#viteServer?.httpServer?.on('close', () => {
-        console.info(pc.yellow('Caddy is shutting down…'))
+        logger.info(pc.yellow('Caddy is shutting down…'))
         const pid = this.#process?.pid
         if (!pid) return
         try {
@@ -224,7 +225,7 @@ export class CaddyServerManager<T extends Framework> {
             error instanceof Error
               ? error.message
               : 'Caddy process is not running or not found'
-          console.error(
+          logger.error(
             pc.red(`Failed to kill Caddy process ${pid}: ${errorMessage}`),
           )
         }
@@ -256,7 +257,7 @@ export class CaddyServerManager<T extends Framework> {
         error instanceof Error
           ? error.message
           : 'Caddy process is not running or not found'
-      console.error(
+      logger.error(
         pc.red(`Failed to kill Caddy process ${pid}: ${errorMessage}`),
       )
       this.#isRunning = false
@@ -271,7 +272,7 @@ export class CaddyServerManager<T extends Framework> {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
-      console.error(pc.red(`Failed to restart Caddy: ${errorMessage}`))
+      logger.error(pc.red(`Failed to restart Caddy: ${errorMessage}`))
       throw error
     }
   }

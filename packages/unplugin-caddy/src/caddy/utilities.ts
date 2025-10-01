@@ -5,6 +5,35 @@ import NodeCrypto from 'node:crypto'
 import NodeFS from 'node:fs/promises'
 import NodeChildProcess from 'node:child_process'
 
+import { logger } from '#utilities.ts'
+
+type CaddyLogLevel = 'ERROR' | 'WARN' | 'INFO' | 'DEBUG'
+
+export interface GenerateCaddyConfigOptions {
+  logFile?: {
+    /**
+     * Absolute or relative path for the Caddy request log.
+     */
+    path: string
+    /**
+     * Log level to persist to disk. Defaults to WARN.
+     */
+    level?: CaddyLogLevel
+    /**
+     * Format for the file encoder.
+     */
+    format?: 'json' | 'console'
+    /**
+     * Restrict file logging to these domains. If omitted, all configured domains log to the file.
+     */
+    domains?: Array<string>
+  }
+  /**
+   * Override the stdout log level that Caddy should emit.
+   */
+  stdoutLevel?: CaddyLogLevel
+}
+
 export function isCaddyInstalled() {
   let caddyIsInstalled = false
   try {
@@ -12,7 +41,7 @@ export function isCaddyInstalled() {
     caddyIsInstalled = true
   } catch {
     caddyIsInstalled = false
-    console.error(pc.yellow('Caddy is not installed'))
+    logger.error(pc.yellow('Caddy is not installed'))
   }
   return caddyIsInstalled
 }
@@ -50,8 +79,91 @@ export function generateCaddyConfig(
   port: number = 69_69,
   targetPort: number = 51_73,
   _cors?: string,
+  options: GenerateCaddyConfigOptions = {},
 ) {
+  const STDOUT_LOGGER_NAME = 'unplugin_caddy_stdout'
+  const FILE_LOGGER_NAME = 'unplugin_caddy_file'
+
+  const stdoutLevel = options.stdoutLevel ?? 'INFO'
+
+  let logFilePath: string | undefined
+  if (options.logFile?.path) {
+    if (isValidPath(options.logFile.path)) {
+      logFilePath = NodePath.resolve(options.logFile.path)
+    } else {
+      logger.warn(
+        pc.yellow(
+          `Invalid Caddy log file path provided: ${options.logFile.path}. Falling back to stdout logging only.`,
+        ),
+      )
+    }
+  }
+
+  const fileLogLevel = options.logFile?.level ?? 'WARN'
+  const fileLogFormat = options.logFile?.format ?? 'json'
+
+  const filteredLogDomains = options.logFile?.domains
+    ?.filter(Boolean)
+    .filter(domain => {
+      if (!isValidDomain(domain)) {
+        logger.warn(
+          pc.yellow(`Ignoring invalid domain in log filter: ${domain}`),
+        )
+        return false
+      }
+      return true
+    })
+    .map(domain => domain.toLowerCase())
+
+  const hasDomainFilter = Boolean(filteredLogDomains?.length)
+  const domainFilterSet = new Set(filteredLogDomains)
+
+  const loggerNames = domains.reduce<Record<string, string>>((acc, domain) => {
+    const normalizedDomain = domain.toLowerCase()
+    const useFileLogger =
+      Boolean(logFilePath) &&
+      (!hasDomainFilter || domainFilterSet.has(normalizedDomain))
+
+    acc[domain] = useFileLogger ? FILE_LOGGER_NAME : STDOUT_LOGGER_NAME
+    return acc
+  }, {})
+
+  const loggingConfig: Record<
+    string,
+    {
+      writer: Record<string, unknown>
+      encoder: { format: string }
+      level: CaddyLogLevel
+    }
+  > = {
+    [STDOUT_LOGGER_NAME]: {
+      writer: {
+        output: 'stdout',
+      },
+      encoder: {
+        format: 'console',
+      },
+      level: stdoutLevel,
+    },
+  }
+
+  if (logFilePath) {
+    loggingConfig[FILE_LOGGER_NAME] = {
+      writer: {
+        output: 'file',
+        filename: logFilePath,
+      },
+      encoder: {
+        format: fileLogFormat,
+      },
+      level: fileLogLevel,
+    }
+  }
+
   const config = {
+    logging: {
+      logs: loggingConfig,
+    },
     apps: {
       http: {
         servers: {
@@ -85,11 +197,11 @@ export function generateCaddyConfig(
               terminal: true,
             })),
             logs: {
-              logger_names: domains.reduce((loggerNames, domain) => {
-                // @ts-expect-error
-                loggerNames[domain] = 'stdout'
-                return loggerNames
-              }, {}),
+              default_logger_name:
+                logFilePath && !hasDomainFilter
+                  ? FILE_LOGGER_NAME
+                  : STDOUT_LOGGER_NAME,
+              logger_names: loggerNames,
             },
           },
         },
@@ -201,7 +313,7 @@ export function isValidPath(path: string): boolean {
 export function sanitizeCaddyPath(caddyPath: string): string {
   // Default to 'caddy' if invalid
   if (!caddyPath || !isValidPath(caddyPath)) {
-    console.warn(pc.yellow('Invalid caddy path provided, using default: caddy'))
+    logger.warn('Invalid caddy path provided, using default: caddy')
     return 'caddy'
   }
 
@@ -238,12 +350,12 @@ export function printBanner(params: {
   additionalDomains?: Array<string>
 }): void {
   const url = new URL(params.caddyUrl)
-  console.info(`\n${pc.cyan('  Unplugin Caddy is running!\n')}`)
+  logger.info(`\n${pc.cyan('  Unplugin Caddy is running!\n')}`)
 
   const label = params.targetLabel ?? 'Dev server'
-  console.info(pc.dim(`  ${label}:  `) + pc.dim(params.targetUrl))
+  logger.info(pc.dim(`  ${label}:  `) + pc.dim(params.targetUrl))
 
-  console.info(
+  logger.info(
     pc.green('  Caddy proxy:      ') +
       pc.green(params.caddyUrl) +
       pc.green(' (HTTPS)'),
@@ -256,9 +368,6 @@ export function printBanner(params: {
           : `http://${domain}:${url.port}`,
       )
       .join(', ')
-    console.info(
-      pc.green('  Additional domains: ') + pc.green(formattedDomains),
-    )
+    logger.info(pc.green('  Additional domains: ') + pc.green(formattedDomains))
   }
-  console.info()
 }
