@@ -8,7 +8,7 @@
     "build": "bun --filter unplugin-caddy build",
     "typecheck": "tsc --project tsconfig.json --noEmit && bun --filter='*' typecheck",
     "changeset:version": "changeset version && biome format . --write",
-    "changeset:publish": "bun ./scripts/publish.ts --registry='https://registry.npmjs.org' --registry='https://npm.pkg.github.com'",
+    "changeset:publish": "bun ./scripts/publish.ts --registry='https://registry.npmjs.org'",
     "*": "bun run build && bun run check && bun typecheck && bun --filter unplugin-caddy check:repo"
   },
   "imports": {
