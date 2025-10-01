@@ -33,6 +33,7 @@
     "README.md",
     "package.json"
   ],
+  "readme": "https://github.com/o-az/unplugin-caddy/blob/main/.github/README.md",
   "scripts": {
     "build": "tsdown --config='tsdown.config.ts'",
     "test": "vitest",
