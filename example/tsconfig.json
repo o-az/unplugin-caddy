@@ -30,12 +30,6 @@
       "node"
     ],
     "paths": {
-      "#unplugin-caddy/rspack": [
-        "../packages/unplugin-caddy/src/rspack.ts"
-      ],
-      "#unplugin-caddy/webpack": [
-        "../packages/unplugin-caddy/src/webpack.ts"
-      ],
       "#unplugin-caddy/*": [
         "../packages/unplugin-caddy/src/*"
       ]

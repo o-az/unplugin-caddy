@@ -162,35 +162,48 @@ export class CaddyServerManager<T extends Framework> {
       const message = data.toString().trim()
       if (!message) return
 
-      try {
-        const log = JSON.parse(message) as {
-          level: string
-          msg?: string
-          ts?: number
-          [key: string]: unknown
+      const lines = message.split('\n').filter(Boolean)
+
+      for (const line of lines) {
+        try {
+          const log = JSON.parse(line) as {
+            level: string
+            msg?: string
+            ts?: number
+            [key: string]: unknown
+          }
+
+          if (!this.#options.verbose) {
+            if (log.level === 'info') continue
+            if (
+              log.level === 'warn' &&
+              log.msg?.toLowerCase().includes('stapling ocsp')
+            )
+              continue
+          }
+
+          const prefix =
+            log.level === 'error'
+              ? '❌'
+              : log.level === 'warn'
+                ? '⚠️'
+                : log.level === 'info'
+                  ? '📘'
+                  : '📝'
+
+          const color =
+            log.level === 'error'
+              ? pc.red
+              : log.level === 'warn'
+                ? pc.yellow
+                : pc.blue
+
+          console.log(`${prefix} ${color(log.msg || line)}`)
+        } catch {
+          if (this.#options.verbose || line.toLowerCase().includes('error')) {
+            console.error(pc.red(`❌ Caddy: ${line}`))
+          }
         }
-
-        if (!this.#options.verbose && log.level === 'info') return
-
-        const prefix =
-          log.level === 'error'
-            ? '❌'
-            : log.level === 'warn'
-              ? '⚠️'
-              : log.level === 'info'
-                ? '📘'
-                : '📝'
-
-        const color =
-          log.level === 'error'
-            ? pc.red
-            : log.level === 'warn'
-              ? pc.yellow
-              : pc.blue
-
-        console.log(`${prefix} ${color(log.msg || message)}`)
-      } catch {
-        if (this.#options.verbose) console.log(`📝 ${pc.gray(message)}`)
       }
     })
 

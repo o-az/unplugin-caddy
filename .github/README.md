@@ -9,10 +9,10 @@
 - [Astro](https://astro.build),
 - [Rspack](https://rspack.rs),
 - [Webpack](https://webpack.js.org)
+- [Farm](https://farmfe.org)
 - [esbuild](https://esbuild.github.io) <sup>soon</sup>
 - [Rollup](https://rollupjs.org) <sup>soon</sup>
 - [Rolldown](https://rolldown.rs) <sup>soon</sup>
-- [Farm](https://farmfe.org) <sup>soon</sup>
 
 Easiest way to get `https` support for your local development.
 
@@ -213,6 +213,8 @@ export default defineConfig({
   ]
 })
 ```
+
+Example in [./example/farm.config.ts](./example/farm.config.ts): `bun --filter example dev:farm`
 
 <br></details>
 

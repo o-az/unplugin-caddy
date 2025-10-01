@@ -58,7 +58,7 @@
     "@types/node": "catalog:",
     "publint": "^0.3.13",
     "rollup": "^4.52.3",
-    "tsdown": "^0.15.5",
+    "tsdown": "^0.15.6",
     "typescript": "catalog:",
     "unplugin-unused": "^0.5.3",
     "vite": "catalog:",

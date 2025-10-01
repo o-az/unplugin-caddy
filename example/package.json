@@ -7,6 +7,7 @@
     "dev:vite": "vite --config='vite.config.ts'",
     "dev:rspack": "rspack serve --config='rspack.config.ts'",
     "dev:webpack": "webpack serve --config='webpack.config.ts' --disable-interpret",
+    "dev:farm": "farm --config='farm.config.ts'",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "preview": "vite preview"
   },
@@ -17,9 +18,10 @@
     "rolldown": "^1.0.0-beta.40",
     "rollup": "^4.52.3",
     "vite": "catalog:",
-    "webpack": "^5.101.3"
+    "webpack": "^5.102.0"
   },
   "devDependencies": {
+    "@farmfe/cli": "^1.0.5",
     "@rspack/cli": "^1.5.7",
     "@total-typescript/ts-reset": "catalog:",
     "@types/bun": "catalog:",

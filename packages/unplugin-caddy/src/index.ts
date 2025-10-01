@@ -213,6 +213,9 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
           const protocol = resolveProtocol()
           const targetUrl = `${protocol}://${host}:${effectivePort}`
 
+          // so that the server url shows up last
+          await new Promise(resolve => setTimeout(resolve, 100))
+
           printBanner({
             verbose: options.options.verbose,
             caddyUrl: caddyServer.getUrl(),
@@ -277,6 +280,9 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
               caddyInitialized = true
               await caddyServer.start()
 
+              // so that the server url shows up last
+              await new Promise(resolve => setTimeout(resolve, 100))
+
               printBanner({
                 verbose: options.options.verbose,
                 caddyUrl: caddyServer.getUrl(),
@@ -296,7 +302,50 @@ export const unpluginFactory: UnpluginFactory<Options, false> = (
         attachServerCleanup(server.httpServer)
       },
     },
-    farm: {},
+    farm: {
+      configureDevServer(server) {
+        if (!server) return
+
+        const targetPort = server.config?.port || 88_33
+
+        if (!caddyServer || caddyServer.framework !== 'farm') {
+          if (caddyServer) void caddyServer.stop()
+          caddyServer = new CaddyServerManager({
+            framework: 'farm',
+            server: server as any,
+            targetPort,
+            options: options.options,
+          })
+        } else caddyServer.setTargetPort(targetPort)
+
+        if (!caddyInitialized) {
+          server.server?.on('listening', async () => {
+            try {
+              if (!caddyServer || caddyInitialized) return
+              caddyInitialized = true
+              await caddyServer.start()
+
+              await new Promise(resolve => setTimeout(resolve, 200))
+
+              printBanner({
+                verbose: options.options.verbose,
+                caddyUrl: caddyServer.getUrl(),
+                https: options.options.https ?? true,
+                additionalDomains: options.options.domains,
+                targetLabel: 'Farm dev server',
+                targetUrl: `http://localhost:${targetPort}`,
+              })
+            } catch (error) {
+              console.error('Failed to start Caddy:', error)
+              caddyInitialized = false
+            }
+          })
+        }
+
+        registerProcessCleanup()
+        attachServerCleanup(server.server)
+      },
+    },
     rollup: {},
     esbuild: {},
     rolldown: {},
