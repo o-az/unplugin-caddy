@@ -1,5 +1,13 @@
 # unplugin-caddy
 
+## 0.0.6
+
+### Patch Changes
+
+- [#11](https://github.com/o-az/unplugin-caddy/pull/11) [`b2a42e0`](https://github.com/o-az/unplugin-caddy/commit/b2a42e08bae4b180322cb75acd863072fc607ebe) Thanks [@o-az](https://github.com/o-az)! - Fixed types and added missing README.md
+
+- [#13](https://github.com/o-az/unplugin-caddy/pull/13) [`d5a1d9f`](https://github.com/o-az/unplugin-caddy/commit/d5a1d9f9c4d0f067eacfd7ca919e96069e6de7ad) Thanks [@o-az](https://github.com/o-az)! - Actually add missing README.md :)
+
 ## 0.0.5
 
 ### Patch Changes
