@@ -10,8 +10,8 @@
   "files": [
     "dist",
     "LICENSE",
-    "README.md",
-    "package.json"
+    "package.json",
+    "./.github/README.md"
   ],
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
