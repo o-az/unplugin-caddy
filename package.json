@@ -42,8 +42,6 @@
     "check:types": "bun tsgo --project tsconfig.json --noEmit",
     "changeset:version": "changeset version && biome format . --write",
     "changeset:publish": "bun ./scripts/publish.ts --registry='https://registry.npmjs.org'",
-    "publint": "bun x publint@latest run --pack bun --strict",
-    "attw": "bun x @arethetypeswrong/cli@latest --pack . --ignore-rules='false-cjs' --ignore-rules='cjs-resolves-to-esm'",
     "prepublishOnly": "bun run build"
   },
   "dependencies": {
