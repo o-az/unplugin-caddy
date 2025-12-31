@@ -1,23 +1,24 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": [
-      "ES2022",
+      "ESNext",
       "DOM",
       "DOM.Iterable"
     ],
     "skipLibCheck": true,
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
+    "resolvePackageJsonImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "alwaysStrict": true,
+    "checkJs": true,
     "moduleDetection": "force",
     "noEmit": true,
-
-    /* Linting */
     "strict": true,
     "allowJs": true,
     "noUnusedLocals": true,
@@ -27,20 +28,24 @@
     "noUncheckedSideEffectImports": true,
     "types": [
       "bun",
-      "node"
+      "node",
+      "typed-query-selector/strict"
     ],
     "paths": {
-      "#unplugin-caddy/rspack": [
-        "../packages/unplugin-caddy/src/rspack.ts"
-      ],
-      "#unplugin-caddy/webpack": [
-        "../packages/unplugin-caddy/src/webpack.ts"
-      ],
       "#unplugin-caddy/*": [
-        "../packages/unplugin-caddy/src/*"
+        "../src/*"
       ]
     }
   },
+  "files": [
+    "main.ts",
+    "reset.d.ts",
+    "package.json",
+    "vite-env.d.ts",
+    "vite.config.ts",
+    "rspack.config.ts",
+    "webpack.config.ts"
+  ],
   "include": [
     "**/*.ts",
     "**/*.js",

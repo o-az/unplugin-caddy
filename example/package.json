@@ -7,28 +7,28 @@
     "dev:vite": "vite --config='vite.config.ts'",
     "dev:rspack": "rspack serve --config='rspack.config.ts'",
     "dev:webpack": "webpack serve --config='webpack.config.ts' --disable-interpret",
-    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "check:types": "bun tsgo --project tsconfig.json --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@farmfe/core": "^1.7.11",
-    "@rspack/core": "^1.5.7",
-    "esbuild": "catalog:",
-    "rolldown": "^1.0.0-beta.40",
-    "rollup": "^4.52.3",
-    "vite": "catalog:",
-    "webpack": "^5.101.3"
+    "@rspack/core": "^1.7.0",
+    "webpack": "^5.104.1"
   },
   "devDependencies": {
-    "@rspack/cli": "^1.5.7",
-    "@total-typescript/ts-reset": "catalog:",
-    "@types/bun": "catalog:",
-    "@types/node": "^24.5.2",
+    "@rspack/cli": "^1.7.0",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/bun": "^1.3.5",
+    "@types/node": "^25.0.3",
     "@types/webpack": "^5.28.5",
     "@types/webpack-dev-server": "^4.7.2",
-    "html-webpack-plugin": "^5.6.4",
-    "tsx": "^4.20.6",
-    "typescript": "catalog:",
-    "webpack-cli": "^6.0.1"
+    "@typescript/native-preview": "^7.0.0-dev.20251231.1",
+    "dotenv": "^17.2.3",
+    "html-webpack-plugin": "^5.6.5",
+    "ts-loader": "^9.5.4",
+    "tsx": "^4.21.0",
+    "typed-query-selector": "^2.12.0",
+    "typescript": "^5.9.3",
+    "webpack-cli": "^6.0.1",
+    "zod": "^4.3.3"
   }
 }

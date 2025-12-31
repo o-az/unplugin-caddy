@@ -1,5 +1,5 @@
 import type { ViteDevServer } from 'vite'
-import { type UnpluginFactory } from 'unplugin'
+import type { UnpluginFactory } from 'unplugin'
 import type WebpackDevServer from 'webpack-dev-server'
 import type { DevServer as RspackDevServer } from '@rspack/core'
 

@@ -1,27 +1,45 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true,
-    "defaultBranch": "main"
+    "useIgnoreFile": true
   },
   "files": {
     "includes": [
+      "*",
       "**",
-      "!dist",
-      "!node_modules"
+      "!**/_",
+      "!**/node_modules"
     ],
     "ignoreUnknown": true
   },
   "assist": {
     "enabled": true,
     "actions": {
+      "recommended": true,
       "source": {
-        "useSortedKeys": "off",
-        "organizeImports": "off",
-        "useSortedAttributes": "off"
+        "organizeImports": "off"
       }
+    }
+  },
+  "html": {
+    "assist": {
+      "enabled": true
+    },
+    "experimentalFullSupportEnabled": true,
+    "linter": {
+      "enabled": true
+    },
+    "formatter": {
+      "enabled": true,
+      "lineWidth": 100,
+      "indentWidth": 2,
+      "indentStyle": "space",
+      "bracketSameLine": true,
+      "attributePosition": "auto",
+      "indentScriptAndStyle": true,
+      "selfCloseVoidElements": "never"
     }
   },
   "root": true,
@@ -35,9 +53,6 @@
   },
   "linter": {
     "enabled": true,
-    "includes": [
-      "src"
-    ],
     "rules": {
       "recommended": true,
       "complexity": {
@@ -54,16 +69,14 @@
       "style": {
         "useTemplate": "off",
         "noNonNullAssertion": "off",
+        "useNamingConvention": "off",
+        "noDescendingSpecificity": "off",
         "noUnusedTemplateLiteral": "off",
-        "useNamingConvention": {
-          "level": "error",
-          "options": {
-            "strictCase": false
-          }
-        }
+        "useNodejsImportProtocol": "off"
       },
       "suspicious": {
         "noExplicitAny": "off",
+        "noUnknownAtRules": "off",
         "noEmptyInterface": "off",
         "noConfusingVoidType": "off",
         "noAssignInExpressions": "off"
@@ -75,12 +88,8 @@
       "enabled": true
     },
     "formatter": {
-      "lineWidth": 1,
       "enabled": true,
-      "indentWidth": 2,
-      "bracketSpacing": true,
-      "indentStyle": "space",
-      "trailingCommas": "none"
+      "lineWidth": 1
     },
     "parser": {
       "allowComments": true,
@@ -94,46 +103,27 @@
     "assist": {
       "enabled": true
     },
+    "linter": {
+      "enabled": true
+    },
     "formatter": {
       "enabled": true,
-      "indentWidth": 2,
-      "bracketSpacing": true,
-      "indentStyle": "space",
       "quoteStyle": "single",
-      "bracketSameLine": true,
       "trailingCommas": "all",
+      "bracketSameLine": true,
       "semicolons": "asNeeded",
-      "jsxQuoteStyle": "single",
-      "attributePosition": "auto",
-      "quoteProperties": "preserve",
+      "quoteProperties": "asNeeded",
       "arrowParentheses": "asNeeded"
     }
   },
-  "html": {
-    "parser": {
-      "interpolation": true
-    },
-    "formatter": {
-      "enabled": true,
-      "lineWidth": 100,
-      "indentWidth": 2,
-      "indentStyle": "space",
-      "bracketSameLine": true,
-      "attributePosition": "auto",
-      "indentScriptAndStyle": true,
-      "selfCloseVoidElements": "never"
-    }
-  },
   "css": {
-    "parser": {
-      "allowWrongLineComments": true
-    },
     "assist": {
       "enabled": true
     },
-    "globals": [
-      "@apply"
-    ],
+    "parser": {
+      "cssModules": true,
+      "allowWrongLineComments": true
+    },
     "linter": {
       "enabled": true
     },
@@ -144,8 +134,8 @@
   "overrides": [
     {
       "includes": [
-        ".json",
-        ".jsonc"
+        "**/*.json",
+        "**/*.jsonc"
       ],
       "formatter": {
         "lineWidth": 1
@@ -165,35 +155,6 @@
         "parser": {
           "allowComments": true,
           "allowTrailingCommas": true
-        }
-      }
-    },
-    {
-      "includes": [
-        ".vue",
-        ".astro",
-        ".svelte"
-      ],
-      "formatter": {
-        "enabled": true
-      },
-      "javascript": {
-        "formatter": {
-          "enabled": true
-        }
-      },
-      "linter": {
-        "enabled": true,
-        "rules": {
-          "style": {
-            "useConst": "off",
-            "useImportType": "off"
-          },
-          "correctness": {
-            "noUnusedImports": "off",
-            "useHookAtTopLevel": "off",
-            "noUnusedVariables": "off"
-          }
         }
       }
     }

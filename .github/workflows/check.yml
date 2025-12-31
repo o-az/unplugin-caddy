@@ -2,8 +2,6 @@ name: Checks
 
 on:
   push:
-    branches:
-      - main
   pull_request:
 
 defaults:
@@ -18,25 +16,30 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
     steps:
-      - name: '🔑 Checkout'
-        uses: actions/checkout@v5
+      - name: "🔑 Checkout"
+        uses: actions/checkout@v6
 
-      - name: '🐰 Setup Bun'
+      - name: "🐰 Setup Bun"
         uses: oven-sh/setup-bun@main
         with:
           bun-version: latest
 
-      - name: 'Install Dependencies'
-        run: bun install
+      - name: "Install Dependencies"
+        run: bun install --frozen-lockfile
 
-      - name: 'Lint, Typecheck, Build'
-        run: |
-          bun x @biomejs/biome check . --reporter='github'
-          bun --filter 'unplugin-caddy' build
-          
-          bun --filter '*' typecheck
-          
-          bun --filter 'unplugin-caddy' check:repo
+      - name: "Setup Biome"
+        uses: biomejs/setup-biome@main
+        with:
+          version: latest
 
-      - name: 'Preview Release'
-        run: bun x pkg-pr-new publish 'packages/unplugin-caddy'
+      - name: "Format & Lint"
+        run: biome ci .
+
+      - name: "Type Check"
+        run: bun tsgo --project tsconfig.json --noEmit
+
+      - name: "Build"
+        run: bun run build
+
+      - name: "Preview Release"
+        run: bun x pkg-pr-new publish .
