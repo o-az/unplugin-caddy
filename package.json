@@ -3,9 +3,6 @@
   "version": "0.0.5",
   "description": "Caddy plugin for Vite, Astro, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
   "type": "module",
-  "workspaces": [
-    "example"
-  ],
   "imports": {
     "#*": "./src/*",
     "#package.json": "./package.json"
