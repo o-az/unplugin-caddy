@@ -19,6 +19,6 @@ import Caddy from '#index.ts'
  * }
  * ```
  */
-const rspack = Caddy.rspack as typeof Caddy.rspack
+const rspack = Caddy.rspack
 export default rspack
 export { rspack as 'module.exports' }

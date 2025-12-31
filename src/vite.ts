@@ -19,6 +19,6 @@ import Caddy from '#index.ts'
  * })
  * ```
  */
-const vite = Caddy.vite as typeof Caddy.vite
+const vite = Caddy.vite
 export default vite
 export { vite as 'module.exports' }

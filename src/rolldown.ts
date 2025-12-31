@@ -19,6 +19,6 @@ import Caddy from '#index.ts'
  * }
  * ```
  */
-const rolldown = Caddy.rolldown as typeof Caddy.rolldown
+const rolldown = Caddy.rolldown
 export default rolldown
 export { rolldown as 'module.exports' }

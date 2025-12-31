@@ -19,6 +19,6 @@ import Caddy from '#index.ts'
  * }
  * ```
  */
-const farm = Caddy.farm as typeof Caddy.farm
+const farm = Caddy.farm
 export default farm
 export { farm as 'module.exports' }

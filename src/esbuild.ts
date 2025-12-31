@@ -17,6 +17,6 @@ import Caddy from '#index.ts'
  * build({ plugins: [Caddy()] })
 ```
  */
-const esbuild = Caddy.esbuild as typeof Caddy.esbuild
+const esbuild = Caddy.esbuild
 export default esbuild
 export { esbuild as 'module.exports' }

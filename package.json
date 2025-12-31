@@ -1,48 +1,131 @@
 {
-  "private": true,
+  "name": "unplugin-caddy",
+  "version": "0.0.5",
+  "description": "Caddy plugin for Vite, Astro, esbuild, Rollup, Rolldown, Webpack, Rspack, Astro, and Farm",
   "type": "module",
-  "scripts": {
-    "test": "vitest",
-    "check": "biome check --write . --unsafe",
-    "play": "bun --filter='playground' run dev",
-    "build": "bun --filter unplugin-caddy build",
-    "typecheck": "tsc --project tsconfig.json --noEmit && bun --filter='*' typecheck",
-    "changeset:version": "changeset version && biome format . --write",
-    "changeset:publish": "bun ./scripts/publish.ts --registry='https://registry.npmjs.org'",
-    "*": "bun run build && bun run check && bun typecheck && bun --filter unplugin-caddy check:repo"
-  },
   "imports": {
-    "#unplugin-caddy/*": "./packages/unplugin-caddy/*"
+    "#*": "./src/*",
+    "#package.json": "./package.json"
   },
-  "workspaces": {
-    "packages": [
-      "example",
-      "packages/*"
-    ],
-    "catalog": {
-      "vite": "^7.1.7",
-      "esbuild": "^0.25.10",
-      "typescript": "^5.9.2",
-      "@types/bun": "^1.2.22",
-      "@types/node": "^24.5.2",
-      "@total-typescript/ts-reset": "^0.6.1"
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./api": "./dist/api.mjs",
+    "./astro": "./dist/astro.mjs",
+    "./esbuild": "./dist/esbuild.mjs",
+    "./farm": "./dist/farm.mjs",
+    "./rolldown": "./dist/rolldown.mjs",
+    "./rollup": "./dist/rollup.mjs",
+    "./rspack": "./dist/rspack.mjs",
+    "./vite": "./dist/vite.mjs",
+    "./webpack": "./dist/webpack.mjs",
+    "./*": "./*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*"
+      ]
     }
   },
-  "devDependencies": {
-    "@biomejs/biome": "^2.2.4",
-    "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.7",
-    "@total-typescript/ts-reset": "catalog:",
-    "@types/bun": "catalog:",
-    "@types/node": "catalog:",
-    "execa": "^9.6.0",
-    "picocolors": "^1.1.1",
-    "typescript": "catalog:",
-    "unplugin": "^2.3.10",
-    "vite": "catalog:",
-    "vitest": "^3.2.4"
+  "scripts": {
+    "build": "tsdown",
+    "check": "biome check . --fix --unsafe",
+    "check:types": "bun tsgo --project tsconfig.json --noEmit",
+    "changeset:version": "changeset version && biome format . --write",
+    "changeset:publish": "bun ./scripts/publish.ts --registry='https://registry.npmjs.org'",
+    "prepublishOnly": "bun run build"
   },
-  "readme": "./.github/README.md",
+  "dependencies": {
+    "picocolors": "^1.1.1",
+    "unplugin": "^2.3.11"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "^0.18.2",
+    "@biomejs/biome": "^2.3.10",
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
+    "@rspack/core": "^1.7.0",
+    "@sxzz/test-utils": "^0.5.15",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/bun": "^1.3.5",
+    "@types/node": "^25.0.3",
+    "@typescript/native-preview": "^7.0.0-dev.20251231.1",
+    "publint": "^0.3.16",
+    "rollup": "^4.54.0",
+    "tsdown": "^0.18.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "unplugin-unused": "^0.5.6",
+    "unplugin-utils": "^0.3.1",
+    "vite": "^7.3.0",
+    "vitest": "^4.0.16",
+    "webpack-dev-server": "^5.2.2",
+    "zod": "^4.3.3"
+  },
+  "peerDependencies": {
+    "vite": ">=3",
+    "esbuild": ">=0.2",
+    "rollup": ">=3",
+    "@farmfe/core": ">=1",
+    "webpack": ">=5",
+    "@rspack/core": ">=1",
+    "astro": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "@farmfe/core": {
+      "optional": true
+    },
+    "esbuild": {
+      "optional": true
+    },
+    "rollup": {
+      "optional": true
+    },
+    "rolldown": {
+      "optional": true
+    },
+    "@rspack/core": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    },
+    "astro": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20.0"
+  },
+  "keywords": [
+    "unplugin",
+    "vite",
+    "webpack",
+    "rspack",
+    "rollup",
+    "rolldown",
+    "esbuild",
+    "farm",
+    "astro"
+  ],
+  "packageManager": "bun@1.3.5",
   "license": "MIT",
-  "packageManager": "bun@1.2.22"
+  "repository": "o-az/unplugin-caddy",
+  "readme": "https://github.com/o-az/unplugin-caddy/blob/main/.github/README.md",
+  "author": "Omar A <gh@omar.mov>",
+  "publishConfig": {
+    "access": "public"
+  }
 }

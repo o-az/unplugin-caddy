@@ -3,7 +3,7 @@
 import * as Bun from 'bun'
 import NodeUtil from 'node:util'
 import NodeProcess from 'node:process'
-import pkgJson from '#unplugin-caddy/package.json' with { type: 'json' }
+import pkgJson from '#package.json' with { type: 'json' }
 
 const { values, positionals: _ } = NodeUtil.parseArgs({
   args: Bun.argv.slice(2),
@@ -17,37 +17,19 @@ const { values, positionals: _ } = NodeUtil.parseArgs({
       default: false,
       multiple: false,
     },
-    'registry': {
+    registry: {
       type: 'string',
       multiple: true,
       default: ['https://registry.npmjs.org'],
     },
-    'npm-token': {
-      type: 'string',
-      multiple: false,
-    },
   },
 })
 
-const NPM_TOKEN =
-  values['npm-token'] ||
-  Bun.env.NPM_TOKEN ||
-  Bun.env.NODE_AUTH_TOKEN ||
-  Bun.env.NPM_CONFIG_TOKEN
-
-if (!NPM_TOKEN) {
-  console.warn('NPM_TOKEN is not set')
-  NodeProcess.exit(1)
-}
-
 async function build() {
-  const { stderr, stdout, exitCode } =
-    await Bun.$ /* sh */`bun --filter unplugin-caddy build`.env({
-      ...Bun.env,
-      NODE_ENV: 'production',
-      NODE_AUTH_TOKEN: NPM_TOKEN,
-      NPM_CONFIG_TOKEN: NPM_TOKEN,
-    })
+  const { stderr, stdout, exitCode } = await Bun.$ /* sh */`bun run build`.env({
+    ...Bun.env,
+    NODE_ENV: 'production',
+  })
 
   if (exitCode !== 0) {
     console.error(`Non-zero exit code: ${exitCode}`, stderr.toString())
@@ -59,14 +41,10 @@ async function build() {
 }
 
 async function pack() {
-  const { stderr, stdout, exitCode } = await Bun.$ /* sh */`bun pm pack`
-    .env({
-      ...Bun.env,
-      NODE_ENV: 'production',
-      NODE_AUTH_TOKEN: NPM_TOKEN,
-      NPM_CONFIG_TOKEN: NPM_TOKEN,
-    })
-    .cwd('packages/unplugin-caddy')
+  const { stderr, stdout, exitCode } = await Bun.$ /* sh */`bun pm pack`.env({
+    ...Bun.env,
+    NODE_ENV: 'production',
+  })
 
   if (exitCode !== 0) {
     console.error(`Non-zero exit code: ${exitCode}`, stderr.toString())
@@ -80,23 +58,24 @@ async function pack() {
 async function publish(registry: string) {
   console.info(`\n\nPublishing to registry: ${registry}\n\n`)
 
-  const packedFile = `./packages/unplugin-caddy/${pkgJson.name}-${pkgJson.version}.tgz`
+  const packedFile = `./${pkgJson.name}-${pkgJson.version}.tgz`
+
+  const isPrerelease =
+    pkgJson.version.includes('alpha') ||
+    pkgJson.version.includes('beta') ||
+    pkgJson.version.includes('rc')
 
   const { stderr, stdout, exitCode } = await Bun.$ /* sh */`
     npm publish ${packedFile} \
       --access="public" \
       --verbose \
       --no-git-checks \
-      --auth-type="legacy" \
       --registry="${registry}" \
-      --provenance=${Bun.env.PROVENANCE || true} \
-      ${values['dry-run'] ? '--dry-run' : ''}`
+      ${values['dry-run'] ? '--dry-run' : ''} \
+      ${isPrerelease ? '--tag=next' : ''}`
     .env({
       ...Bun.env,
       NODE_ENV: 'production',
-      NODE_AUTH_TOKEN: NPM_TOKEN,
-      NPM_CONFIG_TOKEN: NPM_TOKEN,
-      NPM_TOKEN,
     })
     .nothrow()
 
@@ -109,12 +88,36 @@ async function publish(registry: string) {
   console.info('Published successfully')
 }
 
-build()
-  .then(() => pack())
-  .then(async () => {
-    for (const registry of values.registry) publish(registry)
-  })
-  .catch(error => {
-    console.error(error)
-    NodeProcess.exit(1)
-  })
+async function preChecks() {
+  const npmVersion = (
+    await Bun.$ /* sh */`npm --version`
+      .env({ ...Bun.env, NODE_ENV: 'production' })
+      .text()
+  ).trim()
+
+  const order = Bun.semver.order(npmVersion, '11.5.1')
+  if (order !== -1) return
+
+  console.error('GH Publisher requires npm version 11.5.1 or higher')
+  console.info('See https://docs.npmjs.com/trusted-publishers')
+  NodeProcess.exit(1)
+}
+
+preChecks().then(() =>
+  build()
+    .then(() => pack())
+    .then(async () => {
+      for (const registry of values.registry) await publish(registry)
+    })
+    .catch(error => {
+      console.error(error)
+      if (error instanceof Error) {
+        console.info(error.name)
+        console.info(error.stack)
+        console.info(error.cause)
+        console.info(error.message)
+      }
+
+      NodeProcess.exit(1)
+    }),
+)

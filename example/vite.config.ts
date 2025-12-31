@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 
-import Caddy from '#unplugin-caddy/vite.ts'
+import Caddy from '../src/vite'
 
 const caddyPort = 69_62
 
